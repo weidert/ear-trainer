@@ -22,7 +22,9 @@ public enum ChordShape {
     G       (new int[] {3, 2, 0, 0, 0, 3}, Note.G, ChordType.MAJ, "G"),
     G7      (new int[] {3, 2, 0, 0, 0, 1}, Note.G, ChordType.DOM_7, "G7"),
     C       (new int[] {-1, 3, 2, 0, 1, 0}, Note.C, ChordType.MAJ, "C"),
-    C7      (new int[] {-1, 3, 2, 3, 1, 0}, Note.C, ChordType.DOM_7, "C7");
+    C7      (new int[] {-1, 3, 2, 3, 1, 0}, Note.C, ChordType.DOM_7, "C7"),
+    B7      (new int[] {-1, 2, 1, 2, 0, 2}, Note.B, ChordType.DOM_7, "B7"),
+    E_DIM   (new int[] {-1, -1, 2, 3, 2, 3}, Note.E, ChordType.DIM, "Edim");
 
     private List<Integer> offsets;
     private ChordType type;
@@ -79,14 +81,18 @@ public enum ChordShape {
         return bestShape;
     }
 
-    public static Chord fillChord(Chord chord) {
-        ChordShape shape = getShape(chord);
+    public static Chord fillChord(Chord chord, int minFret) {
+        ChordShape shape = getShape(chord, minFret);
         if (shape == null) {
             return chord;
         } else {
             Note newRoot = shape.defaultRoot.nextAbove(chord.getRoot());
             return shape.makeChord(newRoot);
         }
+    }
+
+    public static Chord fillChord(Chord chord) {
+        return fillChord(chord, 0);
     }
 
     public Chord makeChord(Note base) {
@@ -96,5 +102,9 @@ public enum ChordShape {
         }
 
         return chord;
+    }
+
+    public String toString() {
+        return abbrev;
     }
 }

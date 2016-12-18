@@ -30,6 +30,6 @@ public class MainMusic {
         for (Chord chord : key.getChords()) {
             playChord(ChordShape.fillChord(chord));
         }
-        playChord(key.getChords().get(0));
+        playChord(ChordShape.fillChord(key.getChords().get(0)));
     }
 }
