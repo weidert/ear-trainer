@@ -23,6 +23,14 @@ public class Chord {
         }
     }
 
+    public Note getRoot() {
+        if (notes.size() < 1) {
+            return null;
+        }
+
+        return notes.get(0);
+    }
+
     public ChordType getType() {
         if (notes.size() < 1) {
             return null;

@@ -41,6 +41,14 @@ public class Note {
 	public int difference(Note other) {
 		return this.value - other.value;
 	}
+
+    public int distanceTo(Note other) {
+        return other.value - this.value;
+    }
+
+    public Note nextAbove(Note other) {
+        return getHigher(distanceTo(other) % 12);
+    }
 	
 	public boolean sameNoteLetter(Note other) {
 		return ((this.value - other.value) % INTERVALS_IN_CHROMATIC == 0); 

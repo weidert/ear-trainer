@@ -4,8 +4,8 @@ import java.util.Set;
 import java.util.HashSet;
 
 public enum ChordType {
-    MAJOR("Major", "", new int[] {0, 4, 7}, true),
-    MINOR("Minor", "m", new int[] {0, 3, 7}, true),
+    MAJ("Major", "", new int[] {0, 4, 7}, true),
+    MIN("Minor", "m", new int[] {0, 3, 7}, true),
     AUG("Augmented", "+", new int[] {0, 4, 8}, false),
     DIM("Diminished", "\u00b0", new int[] {0, 3, 6}, false),
     DIM_7("Diminished 7th", "\u00b07", new int[] {0, 3, 6, 9}, false),
