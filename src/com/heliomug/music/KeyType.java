@@ -1,7 +1,5 @@
 package com.heliomug.music;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public enum KeyType {
@@ -24,7 +22,11 @@ public enum KeyType {
         return this.offsets;
     }
 
-    public String toString() {
+    public String longString() {
         return this.name + ": " + Arrays.toString(offsets);
+    }
+    
+    public String toString() {
+        return this.name;
     }
 }

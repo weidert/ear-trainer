@@ -1,8 +1,7 @@
 package com.heliomug.music;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 public class Key {
     KeyType type;
