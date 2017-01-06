@@ -1,6 +1,7 @@
-package com.heliomug.music.gui;
+package com.heliomug.music.quizzer;
 
 import java.awt.BorderLayout;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,7 +23,6 @@ public class TabKey extends TabPanel {
 	private static final long serialVersionUID = -359077746517787753L;
 
 	private static final int DRONE_CHANNEL = 3;
-	private static final int DRONE_VOLUME = 1;
 	private static final StandardInstrument DRONE_INSTRUMENT = StandardInstrument.ORGAN_CHURCH; 
 	
 	private JComboBox<Note> rootSelector;
@@ -31,8 +31,9 @@ public class TabKey extends TabPanel {
 	private List<Chord> chords = new Key(Note.C, KeyType.MAJOR).getChords();
 	private Chord lastPlayed;
 	
-	private boolean isDroneOn;
-	
+	private boolean droneWasOn;
+	private Note oldNote;
+
 	private JPanel responsePanel;
 	
 	public TabKey() {
@@ -40,14 +41,24 @@ public class TabKey extends TabPanel {
 		
 		MidiPlayer.setChannel(DRONE_CHANNEL, DRONE_INSTRUMENT);
 		
-		isDroneOn = false;
 		lastPlayed = null;
 		chords = null;
+		droneWasOn = QuizOptions.getOptions().isDroneOn();
 		
 		updateKey();
 		
 	}
 
+	@Override
+	public void paint(Graphics g) {
+		updateDrone();
+		super.paint(g);
+	}
+	
+	public JPanel getStatusPanel() {
+		return new JPanel();
+	}
+	
 	public JPanel getOptionPanel() {
 		JPanel panel = new EtchedPanel("Options");
 		panel.setLayout(new GridLayout(0, 1));
@@ -85,7 +96,7 @@ public class TabKey extends TabPanel {
 		for (Chord chord : chords) {
 			subpanel.add(new ResponseButton(chord));
 		}
-		responsePanel.add(subpanel, BorderLayout.WEST);
+		responsePanel.add(subpanel, BorderLayout.CENTER);
 		
 		subpanel = new JPanel();
 		subpanel.setLayout(new GridLayout(0, 1));
@@ -97,16 +108,27 @@ public class TabKey extends TabPanel {
 		revalidate();
 	}
 	
+	@Override
+	public void blur() {
+		killDrone();
+	}
+	
+	@Override
+	public void focus() {
+		updateDrone();
+	}
+	
+	
 	public void playNew() {
 		lastPlayed = getRandomChord();
-		MusicPlayer.playChord(lastPlayed);
+		MusicPlayer.playChord(lastPlayed, getOptions().getDelay());
 		super.playNew();
 	}
 	
 	@Override
 	public void repeat() {
 		if (lastPlayed != null) {
-			MusicPlayer.playChord(lastPlayed);
+			MusicPlayer.playChord(lastPlayed, getOptions().getDelay());
 		}
 		super.repeat();
 	}
@@ -128,19 +150,39 @@ public class TabKey extends TabPanel {
 			boolean typeRight = chord.getType() == lastPlayed.getType();
 			boolean rootRight = chord.getRoot() == lastPlayed.getRoot();
 			if (typeRight && rootRight) {
-				answerCorrect();
+				answerCorrect(chord.getShortName());
 			} else {
 				answerWrong();
 			}
 			repaint();
 		}
 	}
+
+	private void killDrone() {
+		MidiPlayer.notesOff(DRONE_CHANNEL);
+		droneWasOn = false;
+	}
+	
+	private void updateDrone() {
+		QuizOptions options = QuizOptions.getOptions(); 
+		if (options.isDroneOn()) {
+			if (droneWasOn) {
+				if (!getRoot().equals(oldNote)) {
+					killDrone();
+					MidiPlayer.noteOn(DRONE_CHANNEL, getRoot(), options.getDroneVolume());
+					oldNote = getRoot();
+				}
+			} else {
+				MidiPlayer.noteOn(DRONE_CHANNEL, getRoot(), options.getDroneVolume());
+			}
+			droneWasOn = true;
+		} else {
+			killDrone();
+		}
+	}
 	
 	private void updateKey() {
-		MidiPlayer.notesOff(DRONE_CHANNEL);
-		if (isDroneOn) {
-			MidiPlayer.noteOn(DRONE_CHANNEL, getRoot(), DRONE_VOLUME);
-		} 
+		updateDrone();
 		updateResponsePanel();
 	}
 	
@@ -149,7 +191,7 @@ public class TabKey extends TabPanel {
 		public DemoButton(Chord chord) {
 			super("hear");
 			setFocusable(false);
-			addActionListener((ActionEvent e) -> MusicPlayer.playChord(chord));
+			addActionListener((ActionEvent e) -> MusicPlayer.playChord(chord, getOptions().getDelay()));
 		}
 	}
 	

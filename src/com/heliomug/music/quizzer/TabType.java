@@ -1,14 +1,16 @@
-package com.heliomug.music.gui;
+package com.heliomug.music.quizzer;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.heliomug.music.Chord;
@@ -33,14 +35,13 @@ public class TabType extends TabPanel {
 			KeyEvent.VK_EQUALS, 
 	};
 	
-	private static final Set<ChordType> STANDARD_TYPES = new HashSet<ChordType>();
-	{
-		STANDARD_TYPES.add(ChordType.MAJ);
-		STANDARD_TYPES.add(ChordType.MIN);
-		STANDARD_TYPES.add(ChordType.MIN_7);
-		STANDARD_TYPES.add(ChordType.DOM_7);
-		STANDARD_TYPES.add(ChordType.MAJ_7);
-	}
+	private static final Set<ChordType> STANDARD_TYPES = new HashSet<>(Arrays.asList(new ChordType[] {
+		ChordType.MAJ,
+		ChordType.MIN,
+		ChordType.MIN_7,
+		ChordType.DOM_7,
+		ChordType.MAJ_7,
+	}));
 	
 	private Set<ChordType> activeTypes;
 
@@ -48,17 +49,27 @@ public class TabType extends TabPanel {
 
 	public TabType() {
 		activeTypes = new HashSet<>();
+		for (ChordType type : ChordType.values()) {
+			if (STANDARD_TYPES.contains(type)) {
+				activeTypes.add(type);
+			}
+		}
 		lastPlayed = null;
-		
-		add(getOptionPanel(), BorderLayout.WEST);
-		add(getResponsePanel(), BorderLayout.EAST);
 	}
 
+	public JPanel getStatusPanel() {
+		return new JPanel();
+	}
+	
 	public JPanel getOptionPanel() {
-		JPanel panel = new EtchedPanel("Active Types");
+		JPanel panel = new EtchedPanel("Chord Types");
 		panel.setLayout(new GridLayout(ChordType.values().length, 1));
 		for (ChordType type : ChordType.values()) {
-			panel.add(new ChordTypeToggleBox(type));
+			ChordTypeToggleBox box = new ChordTypeToggleBox(type);
+			panel.add(box);
+			if (STANDARD_TYPES.contains(type)) {
+				box.setSelected(true);
+			};
 		}
 		return panel;
 	}
@@ -92,29 +103,35 @@ public class TabType extends TabPanel {
 	@Override
 	public void playNew() {
 		Note n;
-		boolean isConstantRoot = QuizFrame.getOptions().isConstantRoot();
+		boolean isConstantRoot = QuizOptions.getOptions().isConstantRoot();
 		if (isConstantRoot) {
-			n = QuizFrame.getOptions().getConstantRoot();
+			n = QuizOptions.getOptions().getConstantRoot();
 		} else {
 			n = Note.getRandomGuitarNote();
 		}
-		Chord toPlay = getRandomChordType().constructChord(n);
-		lastPlayed = toPlay;
-		MusicPlayer.playChord(toPlay);
-		super.playNew();
+		if (activeTypes.size() > 0) {
+			Chord toPlay = getRandomChordType().constructChord(n);
+			lastPlayed = toPlay;
+			MusicPlayer.playChord(toPlay, getOptions().getDelay());
+			super.playNew();
+		} else {
+			JOptionPane.showMessageDialog(QuizFrame.getTheFrame(), "Please pick at least one type of chord");
+		}
 	}
 	
 	@Override
 	public void repeat() {
 		if (lastPlayed != null) {
-			MusicPlayer.playChord(lastPlayed);
+			MusicPlayer.playChord(lastPlayed, getOptions().getDelay());
 		}
 		super.repeat();
 	}
 	
 	private void playWithType(ChordType type) {
 		if (lastPlayed != null) {
-			MusicPlayer.playChord(type.constructChord(lastPlayed.getRoot()));
+			int delay = getOptions().getDelay();
+			Chord chord = type.constructChord(lastPlayed.getRoot());
+			MusicPlayer.playChord(chord, delay);
 		}
 	}
 	
@@ -134,7 +151,7 @@ public class TabType extends TabPanel {
 	private void receiveResponse(ChordType type) {
 		if (lastPlayed != null) {
 			if (type == lastPlayed.getType()) {
-				answerCorrect();
+				answerCorrect(type.getName());
 			} else {
 				answerWrong();
 			}
@@ -174,12 +191,6 @@ public class TabType extends TabPanel {
 		public ChordTypeToggleBox(ChordType type) {
 			super(type.getName());
 			setFocusable(false);
-			if (STANDARD_TYPES.contains(type)) {
-				setSelected(true);
-				activeTypes.add(type);
-			} else {
-				setSelected(false);
-			}
 			addActionListener((ActionEvent e) -> {
 				if (isSelected()) {
 					activeTypes.add(type);

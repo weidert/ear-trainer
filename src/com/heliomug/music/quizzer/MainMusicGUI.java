@@ -1,4 +1,4 @@
-package com.heliomug.music.gui;
+package com.heliomug.music.quizzer;
 
 import java.awt.EventQueue;
 

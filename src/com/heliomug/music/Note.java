@@ -95,6 +95,21 @@ public class Note {
 		this.value = val;
 	}
 	
+	public boolean equals(Object other) {
+		if (other == null) {
+			return false;
+		}
+		if (other == this) {
+			return true;
+		}
+		if (!(other instanceof Note)) {
+			return false;
+		}
+		
+		Note otherNote = (Note) other;
+		return otherNote.value == this.value;
+	}
+	
 	public String longString() {
 		return String.format("%2s%d", getNoteName(), value / 12);
 	}

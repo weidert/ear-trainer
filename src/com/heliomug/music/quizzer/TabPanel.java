@@ -1,4 +1,4 @@
-package com.heliomug.music.gui;
+package com.heliomug.music.quizzer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,6 +18,7 @@ public abstract class TabPanel extends JPanel {
 	private static final Color COLOR_WRONG = Color.RED;
 	private static final Color COLOR_NEUTRAL = Color.GRAY;
 
+	private static final int NOT_STARTED = -2;
 	private static final int ANS_PENDING = 0;
 	private static final int ANS_RIGHT = 1;
 	private static final int ANS_WRONG = -1;
@@ -25,14 +26,13 @@ public abstract class TabPanel extends JPanel {
 	private int attempted;
 	private int correct;
 	
-	private boolean isLastAttempted;
-	private int isLastCorrect;
+	private int lastCorrect;
+	private String lastAnswer;
 
 	public TabPanel() {
 	    attempted = 0;
 		correct = 0;
-		isLastAttempted = true;
-		isLastCorrect = ANS_PENDING;
+		lastCorrect = NOT_STARTED;
 
 		addKeyListener(new KeyAdapter() {
 			@Override
@@ -52,13 +52,31 @@ public abstract class TabPanel extends JPanel {
 	
 		setLayout(new BorderLayout());
 		
-		add(getOptionPanel(), BorderLayout.WEST);
-		add(getResponsePanel(), BorderLayout.EAST);
+		JPanel options = getOptionPanel();
+		if (options != null) add(options, BorderLayout.WEST);
+		add(getResponsePanel(), BorderLayout.CENTER);
 		add(getControlPanel(), BorderLayout.SOUTH);
+		add(getActualStatusPanel(), BorderLayout.NORTH);
 	}
 	
+	public void blur() {}
+	public void focus() {}
+	public abstract JPanel getStatusPanel();
 	public abstract JPanel getOptionPanel();
 	public abstract JPanel getResponsePanel();
+
+	private JPanel getActualStatusPanel() {
+		JPanel panel = new EtchedPanel("");
+		panel.setLayout(new BorderLayout());
+		panel.add(makeScoreLabel(), BorderLayout.NORTH);
+		panel.add(getStatusPanel(), BorderLayout.CENTER);
+		panel.add(new JLabel("hey"), BorderLayout.SOUTH);
+		return panel;
+	}
+	
+	public QuizOptions getOptions() {
+		return QuizOptions.getOptions();
+	}
 	
 	private JPanel getControlPanel() {
 		JPanel panel = new JPanel();
@@ -91,14 +109,15 @@ public abstract class TabPanel extends JPanel {
 			}
 		});
 		subpanel.add(subsubpanel, BorderLayout.WEST);
-		subpanel.add(makeScoreLabel(), BorderLayout.CENTER);
 		subpanel.add(new JLabel("???") {
 			@Override
 			public void paint(Graphics g) {
-				if (isLastAttempted) {
-					setText(" ");
-				} else {
+				if (lastCorrect == ANS_WRONG || lastCorrect == NOT_STARTED) {
+					setText("  ");
+				} else if (lastCorrect == ANS_PENDING) {
 					setText("???");
+				} else if (lastCorrect == ANS_RIGHT) {
+					setText(lastAnswer);
 				}
 				super.paint(g);
 			}
@@ -108,9 +127,9 @@ public abstract class TabPanel extends JPanel {
 		subpanel = new JPanel() {
 			@Override
 			public void paint(Graphics g) {
-				if (isLastCorrect == ANS_RIGHT) {
+				if (lastCorrect == ANS_RIGHT) {
 					setBackground(COLOR_CORRECT);
-				} else if (isLastCorrect == ANS_PENDING) {
+				} else if (lastCorrect == ANS_PENDING || lastCorrect == NOT_STARTED) {
 					setBackground(COLOR_NEUTRAL);
 				} else {
 					setBackground(COLOR_WRONG);
@@ -123,8 +142,8 @@ public abstract class TabPanel extends JPanel {
 		return panel;
 	}
 	
-	private JLabel makeScoreLabel() {
-		return new JLabel("Score") {
+	public JLabel makeScoreLabel() {
+		return new JLabel("Score: -") {
 			@Override
 			public void paint(Graphics g) {
 				String scoreString;  
@@ -142,8 +161,7 @@ public abstract class TabPanel extends JPanel {
 	}
 	
 	public void playNew() {
-		isLastAttempted = false;
-		isLastCorrect = ANS_PENDING;
+		lastCorrect = ANS_PENDING;
 		repaint();
 	}
 	
@@ -152,22 +170,20 @@ public abstract class TabPanel extends JPanel {
 	}
 	
 	
-	public void answerCorrect() {
-		if (!isLastAttempted) {
+	public void answerCorrect(String answer) {
+		if (lastCorrect == ANS_PENDING) {
 			attempted++;
 			correct++;
 		}
-		isLastAttempted = true;
-		isLastCorrect = ANS_RIGHT;
+		lastCorrect = ANS_RIGHT;
 		repaint();
 	}
 	
 	public void answerWrong() {
-		if (!isLastAttempted) {
+		if (lastCorrect == ANS_PENDING) {
 			attempted++;
 		}
-		isLastAttempted = true;
-		isLastCorrect = ANS_WRONG;
+		lastCorrect = ANS_WRONG;
 		repaint();
 	}
 }

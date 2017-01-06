@@ -1,4 +1,4 @@
-package com.heliomug.music.gui;
+package com.heliomug.music.quizzer;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -15,6 +15,8 @@ import com.heliomug.music.Note;
 public class ChordBoard extends JDialog {
 	private static final long serialVersionUID = 3177499161338508351L;
 
+	private static final int DELAY = 100;
+	
 	public ChordBoard() {
 		super();
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,7 +45,7 @@ public class ChordBoard extends JDialog {
 			super(chord.getShortName());
 			addActionListener((ActionEvent e) -> {
 				Thread t = new Thread(() -> {
-					MusicPlayer.playChord(chord);
+					MusicPlayer.playChord(chord, DELAY);
 				});
 				t.start();
 			});
