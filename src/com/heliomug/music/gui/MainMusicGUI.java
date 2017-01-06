@@ -2,7 +2,7 @@ package com.heliomug.music.gui;
 
 import java.awt.EventQueue;
 
-public class MusicGUIMain {
+public class MainMusicGUI {
 	public static void main(String[] args) {
 		showQuizBoard();
 	}
@@ -16,7 +16,7 @@ public class MusicGUIMain {
 	
 	public static void showQuizBoard() {
 		EventQueue.invokeLater(() -> {
-			QuizMain board = new QuizMain();
+			QuizFrame board = QuizFrame.getTheFrame();
 			board.setVisible(true);
 		});
 	}

@@ -3,6 +3,7 @@ package com.heliomug.music.gui;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,9 +15,24 @@ import com.heliomug.music.Chord;
 import com.heliomug.music.ChordType;
 import com.heliomug.music.Note;
 
-public class QuizType extends QuizBoard {
+public class TabType extends TabPanel {
 	private static final long serialVersionUID = 3177499161338508351L;
 
+	private static final int[] SHORTCUTS = new int[] {
+			KeyEvent.VK_M, 
+			KeyEvent.VK_N, 
+			KeyEvent.VK_A, 
+			KeyEvent.VK_D, 
+			KeyEvent.VK_B, 
+			KeyEvent.VK_H, 
+			KeyEvent.VK_C, 
+			KeyEvent.VK_E, 
+			KeyEvent.VK_7, 
+			KeyEvent.VK_J, 
+			KeyEvent.VK_F, 
+			KeyEvent.VK_EQUALS, 
+	};
+	
 	private static final Set<ChordType> STANDARD_TYPES = new HashSet<ChordType>();
 	{
 		STANDARD_TYPES.add(ChordType.MAJ);
@@ -30,59 +46,75 @@ public class QuizType extends QuizBoard {
 
 	private Chord lastPlayed;
 
-	public QuizType() {
+	public TabType() {
 		activeTypes = new HashSet<>();
 		lastPlayed = null;
 		
-		JPanel panel;
-		
-		// toggle for active chords
-		panel = new JPanel();
+		add(getOptionPanel(), BorderLayout.WEST);
+		add(getResponsePanel(), BorderLayout.EAST);
+	}
+
+	public JPanel getOptionPanel() {
+		JPanel panel = new EtchedPanel("Active Types");
 		panel.setLayout(new GridLayout(ChordType.values().length, 1));
 		for (ChordType type : ChordType.values()) {
 			panel.add(new ChordTypeToggleBox(type));
 		}
-		add(panel, BorderLayout.WEST);
-		
-		// play buttons
-		panel = new JPanel();
-		panel.setLayout(new GridLayout(ChordType.values().length, 1));
-		for (ChordType type : ChordType.values()) {
-			panel.add(new ChordPlayButton(type)); 
-		}
-		add(panel, BorderLayout.CENTER);
+		return panel;
+	}
+	
+	public JPanel getResponsePanel() {
+		JPanel panel = new EtchedPanel("Reponses");
+
+		JPanel subpanel;
 		
 		// response buttons
-		panel = new JPanel();
-		panel.setLayout(new GridLayout(ChordType.values().length, 1));
-		for (ChordType type : ChordType.values()) {
-			panel.add(new ChordResponseButton(type)); 
+		subpanel = new JPanel();
+		subpanel.setLayout(new GridLayout(ChordType.values().length, 1));
+		for (int i = 0 ; i < ChordType.values().length ; i++) {
+			ChordType type = ChordType.values()[i];
+			char shortcut = (char)SHORTCUTS[i % SHORTCUTS.length];
+			subpanel.add(new ChordResponseButton(type, shortcut)); 
 		}
-		add(panel, BorderLayout.EAST);
-		
-		// scoreboard
-	}
+		panel.add(subpanel, BorderLayout.WEST);
 
+		subpanel = new JPanel();
+		subpanel.setLayout(new GridLayout(ChordType.values().length, 1));
+		for (ChordType type : ChordType.values()) {
+			subpanel.add(new ChordDemoButton(type)); 
+		}
+		panel.add(subpanel, BorderLayout.EAST);
+		
+		return panel;
+	}
+	
 	
 	@Override
 	public void playNew() {
-		Note n = Note.C; //Note.getRandomGuitarNote();
+		Note n;
+		boolean isConstantRoot = QuizFrame.getOptions().isConstantRoot();
+		if (isConstantRoot) {
+			n = QuizFrame.getOptions().getConstantRoot();
+		} else {
+			n = Note.getRandomGuitarNote();
+		}
 		Chord toPlay = getRandomChordType().constructChord(n);
 		lastPlayed = toPlay;
-		playChord(toPlay);
+		MusicPlayer.playChord(toPlay);
 		super.playNew();
 	}
 	
 	@Override
 	public void repeat() {
 		if (lastPlayed != null) {
-			playChord(lastPlayed);
+			MusicPlayer.playChord(lastPlayed);
 		}
+		super.repeat();
 	}
 	
 	private void playWithType(ChordType type) {
 		if (lastPlayed != null) {
-			playChord(type.constructChord(lastPlayed.getRoot()));
+			MusicPlayer.playChord(type.constructChord(lastPlayed.getRoot()));
 		}
 	}
 	
@@ -103,10 +135,8 @@ public class QuizType extends QuizBoard {
 		if (lastPlayed != null) {
 			if (type == lastPlayed.getType()) {
 				answerCorrect();
-				lastPlayed = null;
 			} else {
 				answerWrong();
-				System.out.println("no; " + lastPlayed.getType());
 			}
 			repaint();
 		}
@@ -116,20 +146,21 @@ public class QuizType extends QuizBoard {
 	private class ChordResponseButton extends JButton {
 		private static final long serialVersionUID = -5311484929712227987L;
 
-		public ChordResponseButton(ChordType type) {
-			super(type.getName());
+		public ChordResponseButton(ChordType type, int key) {
+			super(String.format("%s (%s)", type.getShortName(), (char)key));
 			setFocusable(false);
+			setMnemonic((char)key);
 			addActionListener((ActionEvent e) -> {
 				receiveResponse(type);
 			});
 		}
 	}
 	
-	private class ChordPlayButton extends JButton {
+	private class ChordDemoButton extends JButton {
 		private static final long serialVersionUID = -5311484929712227987L;
 
-		public ChordPlayButton(ChordType type) {
-			super(type.getName());
+		public ChordDemoButton(ChordType type) {
+			super("hear");
 			setFocusable(false);
 			addActionListener((ActionEvent e) -> {
 				playWithType(type);
@@ -158,4 +189,5 @@ public class QuizType extends QuizBoard {
 			});
 		}
 	}
+
 }
