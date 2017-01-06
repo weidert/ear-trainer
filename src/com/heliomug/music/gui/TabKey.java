@@ -1,7 +1,6 @@
 package com.heliomug.music.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +33,8 @@ public class TabKey extends TabPanel {
 	
 	private boolean isDroneOn;
 	
+	private JPanel responsePanel;
+	
 	public TabKey() {
 		super();
 		
@@ -64,51 +65,36 @@ public class TabKey extends TabPanel {
 		subpanel.add(typeSelector);
 		panel.add(subpanel);
 
-		updateKey();
-		
 		return panel;
 	}
 	
-	@SuppressWarnings("serial")
 	public JPanel getResponsePanel() {
-		JPanel panel = new EtchedPanel("Responses");
+		responsePanel = new EtchedPanel("Responses");
+		updateResponsePanel();
+		return responsePanel;
+	}
+	
+	public void updateResponsePanel() {
+		responsePanel.removeAll();
+		chords = getKey().getChords();
+		
 		JPanel subpanel;
 		
-		subpanel = new JPanel() {
-			{
-				add(new JLabel("placeholder"));
-				setLayout(new GridLayout(0, 1));
-			}
+		subpanel = new JPanel();
+		subpanel.setLayout(new GridLayout(0, 1));
+		for (Chord chord : chords) {
+			subpanel.add(new ResponseButton(chord));
+		}
+		responsePanel.add(subpanel, BorderLayout.WEST);
 		
-			@Override
-			public void paint(Graphics g) {
-				removeAll();
-				for (Chord chord : chords) {
-					this.add(new ResponseButton(chord));
-				}
-				super.paint(g);
-			}
-		};
-		panel.add(subpanel, BorderLayout.WEST);
-		
-		subpanel = new JPanel() {
-			{
-				add(new JLabel("placeholder"));
-				setLayout(new GridLayout(0, 1));
-			}
-		
-			@Override
-			public void paint(Graphics g) {
-				removeAll();
-				for (Chord chord : chords) {
-					this.add(new DemoButton(chord));
-				}
-				super.paint(g);
-			}
-		};
-		panel.add(subpanel, BorderLayout.EAST);
-		
-		return panel;
+		subpanel = new JPanel();
+		subpanel.setLayout(new GridLayout(0, 1));
+		for (Chord chord : chords) {
+			subpanel.add(new DemoButton(chord));
+		}
+		responsePanel.add(subpanel, BorderLayout.EAST);
+		repaint();
+		revalidate();
 	}
 	
 	public void playNew() {
@@ -155,8 +141,7 @@ public class TabKey extends TabPanel {
 		if (isDroneOn) {
 			MidiPlayer.noteOn(DRONE_CHANNEL, getRoot(), DRONE_VOLUME);
 		} 
-		chords = getKey().getChords();
-		repaint();
+		updateResponsePanel();
 	}
 	
 	@SuppressWarnings("serial")

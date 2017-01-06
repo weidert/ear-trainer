@@ -17,12 +17,14 @@ public class Chord {
         notes.add(n);
     }
 
-    public void play(int channel, int vol) {
-        for (Note n : notes) {
-            MidiPlayer.noteOn(channel, n, vol);
-        }
+    public int size() {
+    	return notes.size();
     }
-
+    
+    public Note getNote(int ind) {
+    	return notes.get(ind);
+    }
+    
     public Note getRoot() {
         if (notes.size() < 1) {
             return null;

@@ -1,9 +1,11 @@
 package com.heliomug.music;
 
+import com.heliomug.music.gui.MusicPlayer;
+
 public class MainMusic {
     public static void playChord(Chord chord) {
         System.out.println(chord);
-        chord.play(1, 100);
+        MusicPlayer.playChord(chord);
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {

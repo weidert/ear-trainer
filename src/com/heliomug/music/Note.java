@@ -95,10 +95,6 @@ public class Note {
 		this.value = val;
 	}
 	
-    public void play(int channel, int vol) {
-        MidiPlayer.noteOn(channel, this, vol);
-    }
-	
 	public String longString() {
 		return String.format("%2s%d", getNoteName(), value / 12);
 	}

@@ -19,7 +19,13 @@ public class QuizMenuBar extends JMenuBar {
     
     private static final StandardInstrument[] BASIC_INSTRUMENTS = new StandardInstrument[] { 
         	StandardInstrument.PIANO_GRAND,	
-        	StandardInstrument.GUITAR_STEEL	
+        	StandardInstrument.PIANO_ELECTRIC_1,
+        	StandardInstrument.GUITAR_NYLON,
+        	StandardInstrument.GUITAR_STEEL, 
+        	StandardInstrument.GUITAR_OVERDRIVE,
+        	StandardInstrument.BANJO,
+        	StandardInstrument.ORGAN_CHURCH,
+        	StandardInstrument.ORGAN_ROCK,
     };
     
 	private static QuizMenuBar theBar;
@@ -46,6 +52,7 @@ public class QuizMenuBar extends JMenuBar {
 		menu.setMnemonic(KeyEvent.VK_O);
 		JMenu submenu, subsubmenu;
 		JCheckBoxMenuItem item;
+				
 		
 		submenu = new JMenu("Instrument");
 		submenu.setMnemonic(KeyEvent.VK_I);
@@ -62,6 +69,7 @@ public class QuizMenuBar extends JMenuBar {
 		menu.add(submenu);
 
 		item = new JCheckBoxMenuItem("Guitarify Chords"); 
+		item.setSelected(QuizOptions.DEFAULT_IS_GUITAR_CHORDS);
 		JCheckBoxMenuItem guit = item;
 		item.addActionListener((ActionEvent e) -> {
 			QuizFrame.getOptions().setGuitarChords(guit.getState());
@@ -69,7 +77,17 @@ public class QuizMenuBar extends JMenuBar {
 		item.setMnemonic(KeyEvent.VK_G);
 		menu.add(item);
 
+		item = new JCheckBoxMenuItem("Use Drone"); 
+		item.setSelected(QuizOptions.DEFAULT_IS_DRONE_ON);
+		JCheckBoxMenuItem drone = item;
+		item.addActionListener((ActionEvent e) -> {
+			QuizFrame.getOptions().setDroneOn(drone.getState());
+		});
+		item.setMnemonic(KeyEvent.VK_D);
+		menu.add(item);
+		
 		item = new JCheckBoxMenuItem("Constant Root"); 
+		item.setSelected(QuizOptions.DEFAULT_IS_CONSTANT_ROOT);
 		JCheckBoxMenuItem root = item;
 		item.addActionListener((ActionEvent e) -> {
 			QuizFrame.getOptions().setConstantRoot(root.getState());
@@ -83,14 +101,6 @@ public class QuizMenuBar extends JMenuBar {
 			submenu.add(new NoteSelector(n));
 		}
 		menu.add(submenu);
-		
-		item = new JCheckBoxMenuItem("Use Drone"); 
-		JCheckBoxMenuItem drone = item;
-		item.addActionListener((ActionEvent e) -> {
-			QuizFrame.getOptions().setDroneOn(drone.getState());
-		});
-		item.setMnemonic(KeyEvent.VK_D);
-		menu.add(item);
 		
 		return menu;
 	}
