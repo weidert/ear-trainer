@@ -4,15 +4,15 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.heliomug.music.Chord;
 import com.heliomug.music.ChordType;
-import com.heliomug.music.MidiPlayer;
 import com.heliomug.music.Note;
 
-public class ChordBoard extends JFrame {
+public class ChordBoard extends JDialog {
 	private static final long serialVersionUID = 3177499161338508351L;
 
 	public ChordBoard() {
@@ -43,22 +43,10 @@ public class ChordBoard extends JFrame {
 			super(chord.getShortName());
 			addActionListener((ActionEvent e) -> {
 				Thread t = new Thread(() -> {
-					playChord(chord);
+					MusicPlayer.playChord(chord);
 				});
 				t.start();
 			});
 		}
 	}
-	
-    public static void playChord(Chord chord) {
-        System.out.println(chord);
-        chord.play(1, 100);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            System.out.println("interrupted");
-        }
-        System.out.println("off");
-        MidiPlayer.notesOff(1);
-    }
 }

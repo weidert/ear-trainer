@@ -1,9 +1,9 @@
 package com.heliomug.music;
 
 public enum StandardInstrument {
-    PIANO_GRAND("Acoustic Grand Piano", 0),
-    PIANO_ACOUSTIC("Bright Acoustic Piano", 1),
-    PIANO_ELECTRIC_GRAND("Electric Grand Piano", 2),
+    PIANO_GRAND("Acoustic Grand Piano", "Grand Piano", 0),
+    PIANO_ACOUSTIC("Bright Acoustic Piano", "Bright Piano", 1),
+    PIANO_ELECTRIC_GRAND("Electric Grand Piano", "Electric Piano", 2),
     PIANO_HONKY_TONK("Honky-tonk Piano", 3),
     PIANO_ELECTRIC_1("Electric Piano 1", 4),
     PIANO_ELECTRIC_2("Electric Piano 2", 5),
@@ -25,11 +25,11 @@ public enum StandardInstrument {
     ACCORDIAN("Accordion", 21),
     HARMONICA("Harmonica", 22),
     ACCORDIAN_TANGE("Tango Accordion", 23),
-    GUITAR_NYLON("Acoustic Guitar (nylon)", 24),
-    GUITAR_STEEL("Acoustic Guitar (steel)", 25),
-    GUITAR_ELECTRIC_JAZZ("Electric Guitar (jazz)", 26),
-    GUITAR_ELECTRIC_CLEAN("Electric Guitar (clean)", 27),
-    GUITAR_ELECTRIC_MUTED("Electric Guitar (muted)", 28),
+    GUITAR_NYLON("Acoustic Guitar (nylon)", "Nylon Guitar", 24),
+    GUITAR_STEEL("Acoustic Guitar (steel)", "Steel Guitar", 25),
+    GUITAR_ELECTRIC_JAZZ("Electric Guitar (jazz)", "Jazz Guitar", 26),
+    GUITAR_ELECTRIC_CLEAN("Electric Guitar (clean)", "Clean Guitar", 27),
+    GUITAR_ELECTRIC_MUTED("Electric Guitar (muted)", "Muted Guitar", 28),
     GUITAR_OVERDRIVE("Overdriven Guitar", 29),
     GUITAR_DISTORTION("Distortion Guitar", 30),
     GUITAR_HARMONICS("Guitar harmonics", 31),
@@ -132,10 +132,16 @@ public enum StandardInstrument {
     DRUM_KIT("Drum Kit", 0);
 
     private String name;
+    private String shortName;
     private int code;
 
     private StandardInstrument(String name, int code) {
+    	this(name, name, code);
+    }
+    
+    private StandardInstrument(String name, String shortName, int code) {
         this.name = name;
+        this.shortName = shortName;
         this.code = code;
     }
 
@@ -143,11 +149,19 @@ public enum StandardInstrument {
         return this.name;
     }
 
+    public String getShortName() {
+    	return this.shortName;
+    }
+    
     public int getCode() {
         return this.code;
     }
 
-    public String toString() {
+    public String longString() {
         return String.format("Instrument: %s (%d)", name, code);
+    }
+    
+    public String toString() {
+    	return getName();
     }
 }

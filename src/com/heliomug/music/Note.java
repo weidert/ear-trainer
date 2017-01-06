@@ -71,6 +71,14 @@ public class Note {
 		throw new IllegalArgumentException("Note name not properly formatted");
 	}
 
+	public static Note[] getNoteRange(int start, int fin) {
+		Note[] notes = new Note[fin - start];
+		for (int i = start ; i < fin ; i++) {
+			notes[i - start] = new Note(i);
+		}
+		return notes;
+	}
+	
 	public static Note getRandomStandardNote() {
 		return new Note((int)(40 + Math.random() * 12));
 	}
@@ -92,7 +100,7 @@ public class Note {
     }
 	
 	public String longString() {
-		return String.format("%-2s(%2d)", getNoteName(), value);
+		return String.format("%2s%d", getNoteName(), value / 12);
 	}
 
 	public String toString() {
@@ -129,7 +137,7 @@ public class Note {
 		return NOTE_LABELS[value % INTERVALS_IN_CHROMATIC];
 	}
 	
-	public static void main(String[] args) {
+	public static void maing(String[] args) {
 		for (int i = 0 ; i < 100 ; i++) {
 			System.out.println(new Note(i).getNoteLabel());
 		}
