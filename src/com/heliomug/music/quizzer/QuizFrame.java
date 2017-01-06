@@ -1,9 +1,10 @@
-package com.heliomug.music.gui;
+package com.heliomug.music.quizzer;
 
 import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
 
 public class QuizFrame extends JFrame {
 	private static final long serialVersionUID = -8687531351328013961L;
@@ -12,12 +13,12 @@ public class QuizFrame extends JFrame {
 
 	public static QuizFrame theFrame; 
 	
-	public QuizOptions options;
+	public TabPanel oldPanel;
 	
 	private QuizFrame() {
 		super(FRAME_TITLE);
 		
-		options = new QuizOptions();
+		oldPanel = null;
 
         setFocusable(false);
         
@@ -35,10 +36,6 @@ public class QuizFrame extends JFrame {
 		return theFrame;
 	}
 	
-	public static QuizOptions getOptions() {
-		return getTheFrame().options;
-	}
-	
 	private JTabbedPane getMainPanel() {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		
@@ -50,6 +47,14 @@ public class QuizFrame extends JFrame {
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_K);
 		tabbedPane.addTab("Intervals", null, new TabInterval(), "Identify Intervals");
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_I);
+		
+		tabbedPane.addChangeListener((ChangeEvent e) -> {
+			if (oldPanel != null) {
+				oldPanel.blur();
+			}
+			oldPanel = (TabPanel)tabbedPane.getSelectedComponent();
+			oldPanel.focus();
+		});
 		
 		return tabbedPane;
 	}

@@ -1,15 +1,14 @@
-package com.heliomug.music.gui;
+package com.heliomug.music.quizzer;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
+import com.heliomug.music.Chord;
 import com.heliomug.music.Note;
 
 public class TabInterval extends TabPanel {
@@ -51,26 +50,16 @@ public class TabInterval extends TabPanel {
 	private Note lastA;
 	private Note lastB;
 	
-	private boolean isParallel;
-	
 	public TabInterval() {
 		super();
 	}
 	
+	public JPanel getStatusPanel() {
+		return new JPanel();
+	}
+	
 	public JPanel getOptionPanel() {
-		JPanel panel = new EtchedPanel("Options");
-		panel.setLayout(new GridLayout(0, 1));
-		PPButton butt;
-		ButtonGroup group  = new ButtonGroup();
-		butt = new PPButton("In Series", false);
-		butt.setSelected(true);
-		panel.add(butt);
-		group.add(butt);
-		butt = new PPButton("In Parallel", true);
-		panel.add(butt);
-		group.add(butt);
-		
-		return panel;
+		return null;
 	}
 
 	public JPanel getResponsePanel() {
@@ -81,26 +70,26 @@ public class TabInterval extends TabPanel {
 		subpanel = new JPanel();
 		subpanel.setLayout(new GridLayout(0, 1));
 		for (int i = 0 ; i <= 12 ; i++) {
-			subpanel.add(new IntervalDemo(i, INTERVAL_NAMES[i]));
-		}
-		panel.add(subpanel, BorderLayout.EAST);
-
-		subpanel = new JPanel();
-		subpanel.setLayout(new GridLayout(0, 1));
-		for (int i = 0 ; i <= 12 ; i++) {
 			int key = INTERVAL_KEYS[i];
 			String name = INTERVAL_NAMES[i];
 			subpanel.add(new IntervalSelector(i, name, key));
 		}
 		panel.add(subpanel, BorderLayout.CENTER);
 		
+		subpanel = new JPanel();
+		subpanel.setLayout(new GridLayout(0, 1));
+		for (int i = 0 ; i <= 12 ; i++) {
+			subpanel.add(new IntervalDemo(i, INTERVAL_NAMES[i]));
+		}
+		panel.add(subpanel, BorderLayout.EAST);
+
 		return panel;
 	}
 	
 	public void playNew() {
 		
-		if (QuizFrame.getOptions().isConstantRoot()) {
-			lastA = QuizFrame.getOptions().getConstantRoot();
+		if (QuizOptions.getOptions().isConstantRoot()) {
+			lastA = QuizOptions.getOptions().getConstantRoot();
 		} else {
 			lastA = Note.getRandomStandardNote();
 		}
@@ -116,11 +105,10 @@ public class TabInterval extends TabPanel {
 	}
 
 	public void playNotes(Note noteA, Note noteB) {
-		if (isParallel) {
-			MusicPlayer.playInParallel(lastA, lastB);
-		} else {
-			MusicPlayer.playInSeries(lastA, lastB);
-		}
+		Chord chord = new Chord();
+		chord.addNote(noteA);
+		chord.addNote(noteB);
+		MusicPlayer.playChord(chord, QuizOptions.getOptions().getIntervalDelay());
 	}
 	
 	public int getCurrentInterval() {
@@ -131,24 +119,17 @@ public class TabInterval extends TabPanel {
 		}
 	}
 	
+	private String getIntervalName(int interval) {
+		return INTERVAL_NAMES[interval];
+	}
+	
 	private void answerInterval(int interval) {
 		if (lastA != null && lastB != null) {
 			if (interval == getCurrentInterval()) {
-				answerCorrect();
+				answerCorrect(getIntervalName(interval));
 			} else {
 				answerWrong();
 			}
-		}
-	}
-	
-	@SuppressWarnings("serial")
-	private class PPButton extends JRadioButton {
-		public PPButton(String label, boolean isParOn) {
-			super(label);
-			setFocusable(false);
-			addActionListener((ActionEvent e) -> {
-				isParallel = isParOn;
-			});
 		}
 	}
 	
