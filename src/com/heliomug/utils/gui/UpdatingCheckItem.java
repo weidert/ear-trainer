@@ -5,22 +5,18 @@ import java.awt.event.ActionEvent;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 
 @SuppressWarnings("serial")
-public class UpdatingCheckBox extends JCheckBox {
-	Supplier<Boolean> source;
+public class UpdatingCheckItem extends JCheckBoxMenuItem {
+	private Supplier<Boolean> source;
 	
-	public UpdatingCheckBox(String title, Consumer<Boolean> dest, Supplier<Boolean> source) {
+	public UpdatingCheckItem(String title, Consumer<Boolean> toDo, Supplier<Boolean> source) {
 		super(title);
-		
 		this.source = source;
-
-		setFocusable(false);
+		this.setFocusable(false);
 		
-		addActionListener((ActionEvent e) -> {
-			dest.accept(isSelected());
-		});
+		addActionListener((ActionEvent e) -> toDo.accept(isSelected()));
 	}
 	
 	@Override

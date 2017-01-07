@@ -55,24 +55,22 @@ public abstract class TabPanel extends JPanel {
 	
 		setLayout(new BorderLayout());
 		
-		JPanel options = getOptionPanel();
+		JPanel options = getLeftPanel();
 		if (options != null) add(options, BorderLayout.WEST);
-		add(getResponsePanel(), BorderLayout.CENTER);
+		add(getRightPanel(), BorderLayout.CENTER);
 		add(getControlPanel(), BorderLayout.SOUTH);
 		add(getActualStatusPanel(), BorderLayout.NORTH);
 	}
 	
 	public void blur() {}
 	public void focus() {}
-	public abstract JPanel getStatusPanel();
-	public abstract JPanel getOptionPanel();
-	public abstract JPanel getResponsePanel();
+	public abstract JPanel getTopPanel();
+	public abstract JPanel getLeftPanel();
+	public abstract JPanel getRightPanel();
 
 	private JPanel getActualStatusPanel() {
 		JPanel panel = new EtchedPanel("");
-		panel.setLayout(new BorderLayout());
-		//panel.add(makeScoreLabel(), BorderLayout.NORTH);
-		panel.add(getStatusPanel(), BorderLayout.CENTER);
+		panel.add(getTopPanel(), BorderLayout.CENTER);
 		return panel;
 	}
 	
