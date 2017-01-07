@@ -10,7 +10,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import com.heliomug.music.Note;
-import com.heliomug.music.StandardInstrument;
+import com.heliomug.music.StdInstrument;
 import com.heliomug.utils.Utils;
 import com.heliomug.utils.gui.MenuSelector;
 
@@ -24,15 +24,15 @@ public class QuizMenuBar extends JMenuBar {
   	private static final int[] STRUM_OPTIONS = new int[] {0, 5, 10, 15, 20, 25, 30};
   	private static final int[] VOLUME_OPTIONS = new int[] {0, 1, 2, 5, 7, 10, 20, 40, 50, 70, 100};
     
-    private static final StandardInstrument[] BASIC_INSTRUMENTS = new StandardInstrument[] { 
-        	StandardInstrument.PIANO_GRAND,	
-        	StandardInstrument.PIANO_ELECTRIC_1,
-        	StandardInstrument.GUITAR_NYLON,
-        	StandardInstrument.GUITAR_STEEL, 
-        	StandardInstrument.GUITAR_OVERDRIVE,
-        	StandardInstrument.BANJO,
-        	StandardInstrument.ORGAN_CHURCH,
-        	StandardInstrument.ORGAN_ROCK,
+    private static final StdInstrument[] BASIC_INSTRUMENTS = new StdInstrument[] { 
+        	StdInstrument.PIANO_GRAND,	
+        	StdInstrument.PIANO_ELECTRIC_1,
+        	StdInstrument.GUITAR_NYLON,
+        	StdInstrument.GUITAR_STEEL, 
+        	StdInstrument.GUITAR_OVERDRIVE,
+        	StdInstrument.BANJO,
+        	StdInstrument.ORGAN_CHURCH,
+        	StdInstrument.ORGAN_ROCK,
     };
     
 	private static QuizMenuBar theBar;
@@ -105,12 +105,12 @@ public class QuizMenuBar extends JMenuBar {
 		JMenu menu = new JMenu("Instrument");
 		menu.setMnemonic(KeyEvent.VK_I);
 		
-		menu.add(new MenuSelector<StandardInstrument>(
+		menu.add(new MenuSelector<StdInstrument>(
 				"Instrument",
 				Arrays.asList(BASIC_INSTRUMENTS), 
-				Arrays.asList(StandardInstrument.values()),
-				(StandardInstrument instrument) -> QuizOptions.getOptions().setInstrument(instrument),
-				(StandardInstrument instrument) -> instrument.getShortName()
+				Arrays.asList(StdInstrument.values()),
+				(StdInstrument instrument) -> QuizOptions.getOptions().setInstrument(instrument),
+				(StdInstrument instrument) -> instrument.getShortName()
 		));
 	
 		menu.add(new MenuSelector<Integer>( 
@@ -157,11 +157,11 @@ public class QuizMenuBar extends JMenuBar {
 		item.setMnemonic(KeyEvent.VK_D);
 		menu.add(item);
 		
-		menu.add(new MenuSelector<StandardInstrument>(
+		menu.add(new MenuSelector<StdInstrument>(
 				"Instrument",
 				Arrays.asList(BASIC_INSTRUMENTS),
-				Arrays.asList(StandardInstrument.values()),
-				(StandardInstrument instrument) -> QuizOptions.getOptions().setDroneInstrument(instrument)
+				Arrays.asList(StdInstrument.values()),
+				(StdInstrument instrument) -> QuizOptions.getOptions().setDroneInstrument(instrument)
 		));
 		
 		menu.add(new MenuSelector<Integer>(

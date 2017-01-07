@@ -23,7 +23,7 @@ public class MidiPlayer {
 		}
 	}
 	
-	public static void setChannel(int chan, StandardInstrument instr) {
+	public static void setChannel(int chan, StdInstrument instr) {
 		channels[chan].programChange(instr.getCode());
 	}
 	
@@ -69,7 +69,7 @@ public class MidiPlayer {
 		}
 		
 		
-		setChannel(1, StandardInstrument.PIANO_GRAND);
+		setChannel(1, StdInstrument.PIANO_GRAND);
 		noteOn(1, 60, 100);
 		wait(.5);
 		noteOn(1, 64, 100);
@@ -83,7 +83,7 @@ public class MidiPlayer {
 		wait(3.0);
 		notesOff(0);
 
-		setChannel(2, StandardInstrument.ORGAN_CHURCH);
+		setChannel(2, StdInstrument.ORGAN_CHURCH);
 		noteOn(2, 60, 100);
 		wait(.5);
 		noteOn(2, 64, 100);

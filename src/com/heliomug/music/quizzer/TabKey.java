@@ -16,7 +16,7 @@ import com.heliomug.music.Key;
 import com.heliomug.music.KeyType;
 import com.heliomug.music.MidiPlayer;
 import com.heliomug.music.Note;
-import com.heliomug.music.StandardInstrument;
+import com.heliomug.music.StdInstrument;
 import com.heliomug.utils.gui.ComboBoxSelector;
 
 public class TabKey extends TabPanel {
@@ -189,7 +189,7 @@ public class TabKey extends TabPanel {
 		QuizOptions opt = QuizOptions.getOptions();
 		boolean on = opt.isDroneOn();
 		Note root = key.getRoot();
-		StandardInstrument instrument = opt.getDroneInstrument();
+		StdInstrument instrument = opt.getDroneInstrument();
 		int vol = opt.getDroneVolume();
 		return new Drone(instrument, root, vol, on);
 	}
@@ -214,11 +214,11 @@ public class TabKey extends TabPanel {
 	
 	private class Drone {
 		int volume;
-		StandardInstrument instrument;
+		StdInstrument instrument;
 		Note root;
 		boolean isOn;
 		
-		public Drone(StandardInstrument instrument, Note root, int vol, boolean isOn) {
+		public Drone(StdInstrument instrument, Note root, int vol, boolean isOn) {
 			this.instrument = instrument;
 			this.volume = vol;
 			this.root = root;

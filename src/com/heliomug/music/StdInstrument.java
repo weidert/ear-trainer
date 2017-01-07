@@ -1,6 +1,6 @@
 package com.heliomug.music;
 
-public enum StandardInstrument {
+public enum StdInstrument {
     PIANO_GRAND("Acoustic Grand Piano", "Grand Piano", 0),
     PIANO_ACOUSTIC("Bright Acoustic Piano", "Bright Piano", 1),
     PIANO_ELECTRIC_GRAND("Electric Grand Piano", "Electric Piano", 2),
@@ -135,11 +135,11 @@ public enum StandardInstrument {
     private String shortName;
     private int code;
 
-    private StandardInstrument(String name, int code) {
+    private StdInstrument(String name, int code) {
     	this(name, name, code);
     }
     
-    private StandardInstrument(String name, String shortName, int code) {
+    private StdInstrument(String name, String shortName, int code) {
         this.name = name;
         this.shortName = shortName;
         this.code = code;
