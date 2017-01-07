@@ -1,6 +1,7 @@
 package com.heliomug.music.trainer;
 
 import java.awt.BorderLayout;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -58,7 +59,35 @@ public class TabType extends TabPanel {
 	}
 
 	public JPanel getStatusPanel() {
-		return new JPanel();
+		JPanel panel = new JPanel();
+		
+		@SuppressWarnings("serial")
+		JCheckBox guitBox = new JCheckBox("Guitarify Chords") {
+			@Override
+			public void paint(Graphics g) {
+				this.setSelected(QuizOptions.getOptions().isGuitarChords());
+				super.paint(g);
+			}
+		};
+		guitBox.addActionListener((ActionEvent e) -> {
+			QuizOptions.getOptions().setGuitarChords(guitBox.isSelected());
+		});
+		panel.add(guitBox);
+
+		@SuppressWarnings("serial")
+		JCheckBox rootBox = new JCheckBox("Constant Root") {
+			@Override
+			public void paint(Graphics g) {
+				this.setSelected(QuizOptions.getOptions().isConstantRoot());
+				super.paint(g);
+			}
+		};
+		rootBox.addActionListener((ActionEvent e) -> {
+			QuizOptions.getOptions().setConstantRoot(rootBox.isSelected());
+		});
+		panel.add(rootBox);
+		
+		return panel;
 	}
 	
 	public JPanel getOptionPanel() {

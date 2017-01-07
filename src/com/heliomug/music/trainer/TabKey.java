@@ -50,13 +50,20 @@ public class TabKey extends TabPanel {
 	
 	public JPanel getStatusPanel() {
 		JPanel panel = new JPanel();
-		JCheckBox box = new JCheckBox("Use Drone");
-		box.addActionListener((ActionEvent e) -> {
-			QuizOptions.getOptions().setDroneOn(box.isSelected());
-			updateDrone();
-		});
-		panel.add(box);
 		
+		@SuppressWarnings("serial")
+		JCheckBox guitBox = new JCheckBox("Guitarify Chords") {
+			@Override
+			public void paint(Graphics g) {
+				this.setSelected(QuizOptions.getOptions().isGuitarChords());
+				super.paint(g);
+			}
+		};
+		guitBox.addActionListener((ActionEvent e) -> {
+			QuizOptions.getOptions().setGuitarChords(guitBox.isSelected());
+		});
+		panel.add(guitBox);
+
 		return panel;
 	}
 	
@@ -135,7 +142,7 @@ public class TabKey extends TabPanel {
 	public void playNew() {
 		lastPlayed = getRandomChord();
 		MusicPlayer.playChord(lastPlayed, getOptions().getDelay());
-		strikeDroneNote();
+		strikeDroneNote(drone);
 		super.playNew();
 	}
 	
@@ -169,20 +176,18 @@ public class TabKey extends TabPanel {
 		MidiPlayer.notesOff(DRONE_CHANNEL);
 	}
 	
-	private void strikeDroneNote() {
+	private void strikeDroneNote(Drone drone) {
 		if (drone.isOn) {
-			MidiPlayer.noteOn(DRONE_CHANNEL, key.getRoot(), QuizOptions.getOptions().getDroneVolume());
+			MidiPlayer.noteOn(DRONE_CHANNEL, drone.root, drone.volume);
 		}
 	}
 	
 	private void updateDrone() {
 		Drone newDrone = getCurrentDrone();
-		System.out.println("updating");
-		System.out.println(newDrone.isOn);
 		if (newDrone.isOn) {
 			if (!newDrone.equals(drone)) {
 				killDrone();
-				strikeDroneNote();
+				strikeDroneNote(newDrone);
 			} 
 		} else {
 			killDrone();

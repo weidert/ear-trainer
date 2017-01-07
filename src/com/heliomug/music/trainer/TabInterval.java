@@ -1,6 +1,7 @@
 package com.heliomug.music.trainer;
 
 import java.awt.BorderLayout;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -65,7 +66,22 @@ public class TabInterval extends TabPanel {
 	}
 	
 	public JPanel getStatusPanel() {
-		return new JPanel();
+		JPanel panel = new JPanel();
+		
+		@SuppressWarnings("serial")
+		JCheckBox box = new JCheckBox("Constant Root") {
+			@Override
+			public void paint(Graphics g) {
+				this.setSelected(QuizOptions.getOptions().isConstantRoot());
+				super.paint(g);
+			}
+		};
+		box.addActionListener((ActionEvent e) -> {
+			QuizOptions.getOptions().setConstantRoot(box.isSelected());
+		});
+		panel.add(box);
+
+		return panel;
 	}
 	
 	public JPanel getOptionPanel() {
@@ -82,6 +98,7 @@ public class TabInterval extends TabPanel {
 					activeIntervals.remove(interval);
 				}
 			});
+			box.setSelected(true);
 			panel.add(box);
 		}
 		return panel;
