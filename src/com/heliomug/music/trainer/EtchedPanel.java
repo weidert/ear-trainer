@@ -1,4 +1,4 @@
-package com.heliomug.music.quizzer;
+package com.heliomug.music.trainer;
 
 import java.awt.BorderLayout;
 

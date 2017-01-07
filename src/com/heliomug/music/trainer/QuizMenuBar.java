@@ -1,4 +1,4 @@
-package com.heliomug.music.quizzer;
+package com.heliomug.music.trainer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -46,7 +46,7 @@ public class QuizMenuBar extends JMenuBar {
 		menu = new JMenu("File");
 		menu.setMnemonic(KeyEvent.VK_F);
 		item = new JMenuItem("Exit", KeyEvent.VK_X);
-		item.addActionListener((ActionEvent e) -> System.exit(0));
+		item.addActionListener((ActionEvent e) -> QuizFrame.quit());
 		menu.add(item);
 		add(menu);
 		

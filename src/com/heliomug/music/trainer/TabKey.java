@@ -1,4 +1,4 @@
-package com.heliomug.music.quizzer;
+package com.heliomug.music.trainer;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;
@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -48,7 +49,15 @@ public class TabKey extends TabPanel {
 	}
 	
 	public JPanel getStatusPanel() {
-		return new JPanel();
+		JPanel panel = new JPanel();
+		JCheckBox box = new JCheckBox("Use Drone");
+		box.addActionListener((ActionEvent e) -> {
+			QuizOptions.getOptions().setDroneOn(box.isSelected());
+			updateDrone();
+		});
+		panel.add(box);
+		
+		return panel;
 	}
 	
 	public JPanel getOptionPanel() {
@@ -168,6 +177,8 @@ public class TabKey extends TabPanel {
 	
 	private void updateDrone() {
 		Drone newDrone = getCurrentDrone();
+		System.out.println("updating");
+		System.out.println(newDrone.isOn);
 		if (newDrone.isOn) {
 			if (!newDrone.equals(drone)) {
 				killDrone();

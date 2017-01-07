@@ -1,4 +1,4 @@
-package com.heliomug.music.quizzer;
+package com.heliomug.music.trainer;
 
 import com.heliomug.music.KeyType;
 import com.heliomug.music.Note;

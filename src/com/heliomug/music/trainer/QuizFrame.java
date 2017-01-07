@@ -1,4 +1,4 @@
-package com.heliomug.music.quizzer;
+package com.heliomug.music.trainer;
 
 import java.awt.event.KeyEvent;
 
@@ -27,6 +27,11 @@ public class QuizFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		add(getMainPanel());
 		pack();
+	}
+	
+	public static void quit() {
+		MusicPlayer.kill();
+		System.exit(0);
 	}
 	
 	public static QuizFrame getTheFrame() {

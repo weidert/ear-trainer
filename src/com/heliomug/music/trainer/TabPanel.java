@@ -1,4 +1,4 @@
-package com.heliomug.music.quizzer;
+package com.heliomug.music.trainer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -38,7 +38,7 @@ public abstract class TabPanel extends JPanel {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					System.exit(0);
+					QuizFrame.quit();
 				} else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 					if (e.isShiftDown()) {
 						repeat();
@@ -70,7 +70,6 @@ public abstract class TabPanel extends JPanel {
 		panel.setLayout(new BorderLayout());
 		panel.add(makeScoreLabel(), BorderLayout.NORTH);
 		panel.add(getStatusPanel(), BorderLayout.CENTER);
-		panel.add(new JLabel("hey"), BorderLayout.SOUTH);
 		return panel;
 	}
 	
