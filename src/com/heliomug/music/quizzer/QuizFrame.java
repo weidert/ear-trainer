@@ -22,7 +22,7 @@ public class QuizFrame extends JFrame {
 
         setFocusable(false);
         
-        setJMenuBar(QuizMenuBar.getBar());
+        setJMenuBar(QuizMenuBar.getTheBar());
         
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		add(getMainPanel());

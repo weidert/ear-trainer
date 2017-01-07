@@ -5,17 +5,29 @@ import java.util.List;
 
 public class Key {
     KeyType type;
-    Note base;
+    Note root;
 
-    public Key(Note base, KeyType type) {
+    public Key(Note root, KeyType type) {
         this.type = type;
-        this.base = base;
+        this.root = root;
     }
 
+    public void setRoot(Note n) {
+    	this.root = n;
+    }
+    
+    public void setType(KeyType type) {
+    	this.type = type;
+    }
+    
+    public Note getRoot() {
+    	return this.root;
+    }
+    
     public List<Note> getNotes() {
         List<Note> notes = new ArrayList<>();
         for (int offset : type.getOffsets()) {
-            notes.add(base.getHigher(offset));
+            notes.add(root.getHigher(offset));
         }
         return notes;
     }
@@ -35,15 +47,15 @@ public class Key {
             }
 
             Chord c = new Chord();
-            c.addNote(base.getHigher(first));
-            c.addNote(base.getHigher(second));
-            c.addNote(base.getHigher(third));
+            c.addNote(root.getHigher(first));
+            c.addNote(root.getHigher(second));
+            c.addNote(root.getHigher(third));
             chords.add(c);
         }
         return chords;
     }
 
     public String toString() {
-        return String.format("%s %s: %s", base, type.getName(), getNotes());
+        return String.format("%s %s: %s", root, type.getName(), getNotes());
     }
 }
