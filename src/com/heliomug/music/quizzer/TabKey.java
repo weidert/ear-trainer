@@ -24,7 +24,7 @@ public class TabKey extends TabPanel {
 
 	private static final int DRONE_CHANNEL = 3;
 	
-	private Key key;
+	private Key key = new Key(QuizOptions.DEFAULT_ROOT_NOTE, QuizOptions.DEFAULT_KEY_TYPE);
 	
 	private List<Chord> chords = new Key(Note.C, KeyType.MAJOR).getChords();
 	private Chord lastPlayed;
@@ -36,15 +36,13 @@ public class TabKey extends TabPanel {
 	public TabKey() {
 		super();
 		
-		MidiPlayer.setChannel(DRONE_CHANNEL, QuizOptions.getOptions().getDroneInstrument());
-		
-		key = new Key(QuizOptions.DEFAULT_ROOT_NOTE, QuizOptions.DEFAULT_KEY_TYPE);
 		lastPlayed = null;
 		chords = null;
 		drone = null;
 		
 		updateKey();
-		
+
+		MidiPlayer.setChannel(DRONE_CHANNEL, QuizOptions.getOptions().getDroneInstrument());
 	}
 
 	@Override
@@ -64,7 +62,7 @@ public class TabKey extends TabPanel {
 		JPanel subpanel = new JPanel();
 		subpanel.add(new JLabel("Key: "));
 		subpanel.add(new ComboBoxSelector<Note>( 
-				Note.getNoteRange(36, 73),
+				Note.getNoteRange(48, 61),
 				(Note n) -> {
 					key.setRoot(n);
 					updateKey();
@@ -84,7 +82,7 @@ public class TabKey extends TabPanel {
 	
 	public JPanel getResponsePanel() {
 		responsePanel = new EtchedPanel("Responses");
-		updateResponsePanel();
+		//updateResponsePanel();
 		return responsePanel;
 	}
 	

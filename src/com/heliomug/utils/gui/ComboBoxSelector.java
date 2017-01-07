@@ -12,7 +12,8 @@ public class ComboBoxSelector<T> extends JComboBox<T> {
 	public ComboBoxSelector(List<T> options, Consumer<T> toDo) {
 		super((T[]) options.toArray());
 		addActionListener((ActionEvent e) -> {
-			T option = (T) e.getSource();
+			JComboBox<T> box = (JComboBox<T>) e.getSource();
+			T option = (T) (box.getSelectedItem());
 			toDo.accept(option);
 		});
 	}
