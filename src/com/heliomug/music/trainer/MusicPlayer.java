@@ -1,4 +1,4 @@
-package com.heliomug.music.quizzer;
+package com.heliomug.music.trainer;
 
 import com.heliomug.music.Chord;
 import com.heliomug.music.ChordShape;
@@ -10,11 +10,16 @@ public class MusicPlayer {
 
 	private static Thread noteMuteThread;
 	
-	public static void playdhord(Chord chord) {
+	public static void kill() {
+        MidiPlayer.notesOff(MIDI_CHANNEL);
+		noteMuteThread.interrupt();
+	}
+	
+	public static void playChord(Chord chord) {
 		playChord(chord, 0);
 	}
 	
-    public static void playChord(Chord chord, int millis) {
+    public static void playChord(Chord chord, int arpeggioDelay) {
         MidiPlayer.setChannel(MIDI_CHANNEL, QuizOptions.getOptions().getInstrument());
 
         Chord toPlay;
@@ -36,7 +41,7 @@ public class MusicPlayer {
 	        	MidiPlayer.noteOn(MIDI_CHANNEL, note, QuizOptions.getOptions().getVolume());
 		        try {
 		            for (int i = 1 ; i < toPlay.size() ; i++) {
-		            	Thread.sleep(millis);
+		            	Thread.sleep(arpeggioDelay);
 		            	note = toPlay.getNote(i);
 			        	MidiPlayer.noteOn(MIDI_CHANNEL, note, QuizOptions.getOptions().getVolume());
 		            }

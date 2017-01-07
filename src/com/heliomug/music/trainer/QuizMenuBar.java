@@ -1,4 +1,4 @@
-package com.heliomug.music.quizzer;
+package com.heliomug.music.trainer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -10,7 +10,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import com.heliomug.music.Note;
-import com.heliomug.music.StandardInstrument;
+import com.heliomug.music.StdInstrument;
 import com.heliomug.utils.Utils;
 import com.heliomug.utils.gui.MenuSelector;
 
@@ -24,15 +24,15 @@ public class QuizMenuBar extends JMenuBar {
   	private static final int[] STRUM_OPTIONS = new int[] {0, 5, 10, 15, 20, 25, 30};
   	private static final int[] VOLUME_OPTIONS = new int[] {0, 1, 2, 5, 7, 10, 20, 40, 50, 70, 100};
     
-    private static final StandardInstrument[] BASIC_INSTRUMENTS = new StandardInstrument[] { 
-        	StandardInstrument.PIANO_GRAND,	
-        	StandardInstrument.PIANO_ELECTRIC_1,
-        	StandardInstrument.GUITAR_NYLON,
-        	StandardInstrument.GUITAR_STEEL, 
-        	StandardInstrument.GUITAR_OVERDRIVE,
-        	StandardInstrument.BANJO,
-        	StandardInstrument.ORGAN_CHURCH,
-        	StandardInstrument.ORGAN_ROCK,
+    private static final StdInstrument[] BASIC_INSTRUMENTS = new StdInstrument[] { 
+        	StdInstrument.PIANO_GRAND,	
+        	StdInstrument.PIANO_ELECTRIC_1,
+        	StdInstrument.GUITAR_NYLON,
+        	StdInstrument.GUITAR_STEEL, 
+        	StdInstrument.GUITAR_OVERDRIVE,
+        	StdInstrument.BANJO,
+        	StdInstrument.ORGAN_CHURCH,
+        	StdInstrument.ORGAN_ROCK,
     };
     
 	private static QuizMenuBar theBar;
@@ -46,7 +46,7 @@ public class QuizMenuBar extends JMenuBar {
 		menu = new JMenu("File");
 		menu.setMnemonic(KeyEvent.VK_F);
 		item = new JMenuItem("Exit", KeyEvent.VK_X);
-		item.addActionListener((ActionEvent e) -> System.exit(0));
+		item.addActionListener((ActionEvent e) -> QuizFrame.quit());
 		menu.add(item);
 		add(menu);
 		
@@ -57,12 +57,10 @@ public class QuizMenuBar extends JMenuBar {
 	public JMenu getOptionMenu() {
 		JMenu menu = new JMenu("Options");
 		menu.setMnemonic(KeyEvent.VK_O);
-		JCheckBoxMenuItem item;
-				
 		
 		menu.add(getInstrumentMenu());
 
-		item = new JCheckBoxMenuItem("Guitarify Chords"); 
+		JCheckBoxMenuItem item = new JCheckBoxMenuItem("Guitarify Chords"); 
 		item.setSelected(QuizOptions.DEFAULT_IS_GUITAR_CHORDS);
 		JCheckBoxMenuItem guit = item;
 		item.addActionListener((ActionEvent e) -> {
@@ -83,9 +81,8 @@ public class QuizMenuBar extends JMenuBar {
 	public JMenu getRootMenu() {
 		JMenu menu = new JMenu("Root");
 		menu.setMnemonic(KeyEvent.VK_R);
-		JCheckBoxMenuItem item;
 		
-		item = new JCheckBoxMenuItem("Constant Root"); 
+		JCheckBoxMenuItem item = new JCheckBoxMenuItem("Constant Root"); 
 		item.setSelected(QuizOptions.DEFAULT_IS_CONSTANT_ROOT);
 		JCheckBoxMenuItem root = item;
 		item.addActionListener((ActionEvent e) -> {
@@ -106,23 +103,29 @@ public class QuizMenuBar extends JMenuBar {
 	
 	public JMenu getInstrumentMenu() {
 		JMenu menu = new JMenu("Instrument");
-		JMenu submenu;
+		menu.setMnemonic(KeyEvent.VK_I);
 		
-		submenu = new MenuSelector<StandardInstrument>(
+		menu.add(new MenuSelector<StdInstrument>(
 				"Instrument",
 				Arrays.asList(BASIC_INSTRUMENTS), 
-				Arrays.asList(StandardInstrument.values()),
-				(StandardInstrument instrument) -> QuizOptions.getOptions().setInstrument(instrument),
-				(StandardInstrument instrument) -> instrument.getShortName()
-		);
-		menu.add(submenu);
+				Arrays.asList(StdInstrument.values()),
+				(StdInstrument instrument) -> QuizOptions.getOptions().setInstrument(instrument),
+				(StdInstrument instrument) -> instrument.getShortName()
+		));
+	
+		menu.add(new MenuSelector<Integer>( 
+				"Volume",
+				Utils.toIntegerList(VOLUME_OPTIONS),
+				(Integer volume) -> QuizOptions.getOptions().setVolume(volume)
+		));
 		
 		return menu;
 	}
 	
 	public JMenu getDelayMenu() {
 		JMenu menu = new JMenu("Delay Options");
-		menu.setMnemonic(KeyEvent.VK_D);
+		menu.setMnemonic(KeyEvent.VK_Y);
+		
 		menu.add(new MenuSelector<Integer>(
 				"Interval Delay", 
 				Utils.toIntegerList(INTERVAL_OPTIONS), 
@@ -154,15 +157,20 @@ public class QuizMenuBar extends JMenuBar {
 		item.setMnemonic(KeyEvent.VK_D);
 		menu.add(item);
 		
-		MenuSelector<Integer> selector = new MenuSelector<>(
-				"Drove Volume", 
+		menu.add(new MenuSelector<StdInstrument>(
+				"Instrument",
+				Arrays.asList(BASIC_INSTRUMENTS),
+				Arrays.asList(StdInstrument.values()),
+				(StdInstrument instrument) -> QuizOptions.getOptions().setDroneInstrument(instrument)
+		));
+		
+		menu.add(new MenuSelector<Integer>(
+				"Volume", 
 				Utils.toIntegerList(VOLUME_OPTIONS), 
 				(Integer vol) -> {
 					QuizOptions.getOptions().setDroneVolume(vol);
 				}
-		);
-		selector.setMnemonic(KeyEvent.VK_V);
-		menu.add(selector);
+		));
 		
 		return menu;
 	}

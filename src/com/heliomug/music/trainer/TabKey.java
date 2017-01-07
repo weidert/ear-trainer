@@ -1,4 +1,4 @@
-package com.heliomug.music.quizzer;
+package com.heliomug.music.trainer;
 
 import java.awt.BorderLayout;
 import java.awt.Graphics;
@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -16,7 +17,7 @@ import com.heliomug.music.Key;
 import com.heliomug.music.KeyType;
 import com.heliomug.music.MidiPlayer;
 import com.heliomug.music.Note;
-import com.heliomug.music.StandardInstrument;
+import com.heliomug.music.StdInstrument;
 import com.heliomug.utils.gui.ComboBoxSelector;
 
 public class TabKey extends TabPanel {
@@ -25,13 +26,9 @@ public class TabKey extends TabPanel {
 	private static final int DRONE_CHANNEL = 3;
 	
 	private Key key = new Key(QuizOptions.DEFAULT_ROOT_NOTE, QuizOptions.DEFAULT_KEY_TYPE);
-	
 	private List<Chord> chords = new Key(Note.C, KeyType.MAJOR).getChords();
 	private Chord lastPlayed;
-	
 	private Drone drone;
-
-	private JPanel responsePanel;
 
 	public TabKey() {
 		super();
@@ -52,11 +49,19 @@ public class TabKey extends TabPanel {
 	}
 	
 	public JPanel getStatusPanel() {
-		return new JPanel();
+		JPanel panel = new JPanel();
+		JCheckBox box = new JCheckBox("Use Drone");
+		box.addActionListener((ActionEvent e) -> {
+			QuizOptions.getOptions().setDroneOn(box.isSelected());
+			updateDrone();
+		});
+		panel.add(box);
+		
+		return panel;
 	}
 	
 	public JPanel getOptionPanel() {
-		JPanel panel = new EtchedPanel("Options");
+		JPanel panel = new EtchedPanel("Key");
 		panel.setLayout(new GridLayout(0, 1));
 		
 		JPanel subpanel = new JPanel();
@@ -81,12 +86,19 @@ public class TabKey extends TabPanel {
 	}
 	
 	public JPanel getResponsePanel() {
-		responsePanel = new EtchedPanel("Responses");
-		//updateResponsePanel();
+		@SuppressWarnings("serial")
+		JPanel responsePanel = new EtchedPanel("Responses") {
+			@Override 
+			public void paint(Graphics g) {
+				updateResponsePanel(this);
+				super.paint(g);
+			}
+		};
+		
 		return responsePanel;
 	}
 	
-	public void updateResponsePanel() {
+	public void updateResponsePanel(JPanel responsePanel) {
 		responsePanel.removeAll();
 		chords = key.getChords();
 		
@@ -105,9 +117,9 @@ public class TabKey extends TabPanel {
 			subpanel.add(new DemoButton(chord));
 		}
 		responsePanel.add(subpanel, BorderLayout.EAST);
-		repaint();
 		revalidate();
 	}
+	
 	
 	@Override
 	public void blur() {
@@ -165,6 +177,8 @@ public class TabKey extends TabPanel {
 	
 	private void updateDrone() {
 		Drone newDrone = getCurrentDrone();
+		System.out.println("updating");
+		System.out.println(newDrone.isOn);
 		if (newDrone.isOn) {
 			if (!newDrone.equals(drone)) {
 				killDrone();
@@ -178,7 +192,7 @@ public class TabKey extends TabPanel {
 	
 	private void updateKey() {
 		updateDrone();
-		updateResponsePanel();
+		repaint();
 	}
 	
 	
@@ -186,7 +200,7 @@ public class TabKey extends TabPanel {
 		QuizOptions opt = QuizOptions.getOptions();
 		boolean on = opt.isDroneOn();
 		Note root = key.getRoot();
-		StandardInstrument instrument = opt.getDroneInstrument();
+		StdInstrument instrument = opt.getDroneInstrument();
 		int vol = opt.getDroneVolume();
 		return new Drone(instrument, root, vol, on);
 	}
@@ -211,11 +225,11 @@ public class TabKey extends TabPanel {
 	
 	private class Drone {
 		int volume;
-		StandardInstrument instrument;
+		StdInstrument instrument;
 		Note root;
 		boolean isOn;
 		
-		public Drone(StandardInstrument instrument, Note root, int vol, boolean isOn) {
+		public Drone(StdInstrument instrument, Note root, int vol, boolean isOn) {
 			this.instrument = instrument;
 			this.volume = vol;
 			this.root = root;

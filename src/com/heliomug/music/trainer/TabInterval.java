@@ -1,11 +1,15 @@
-package com.heliomug.music.quizzer;
+package com.heliomug.music.trainer;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.heliomug.music.Chord;
@@ -13,6 +17,8 @@ import com.heliomug.music.Note;
 
 public class TabInterval extends TabPanel {
 	private static final long serialVersionUID = 1825689907037878532L;
+	
+	private Set<Integer> activeIntervals;
 	
 	private static final String[] INTERVAL_NAMES = new String[] {
 			"Unison",
@@ -52,6 +58,10 @@ public class TabInterval extends TabPanel {
 	
 	public TabInterval() {
 		super();
+		activeIntervals = new HashSet<>();
+		for (int i = 0 ; i <= 12 ; i++) {
+			activeIntervals.add(i);
+		}
 	}
 	
 	public JPanel getStatusPanel() {
@@ -59,7 +69,22 @@ public class TabInterval extends TabPanel {
 	}
 	
 	public JPanel getOptionPanel() {
-		return null;
+		JPanel panel = new EtchedPanel("Intervals");
+		panel.setLayout(new GridLayout(0, 1));
+		for (int i = 0 ; i <= 12 ; i++) {
+			int interval = i;
+			JCheckBox box = new JCheckBox(INTERVAL_NAMES[i]);
+			box.setFocusable(false);
+			box.addActionListener((ActionEvent e) -> {
+				if (box.isSelected()) {
+					activeIntervals.add(interval);
+				} else {
+					activeIntervals.remove(interval);
+				}
+			});
+			panel.add(box);
+		}
+		return panel;
 	}
 
 	public JPanel getResponsePanel() {
@@ -72,30 +97,46 @@ public class TabInterval extends TabPanel {
 		for (int i = 0 ; i <= 12 ; i++) {
 			int key = INTERVAL_KEYS[i];
 			String name = INTERVAL_NAMES[i];
-			subpanel.add(new IntervalSelector(i, name, key));
+			subpanel.add(new IntervalAnswerButton(i, name, key));
 		}
 		panel.add(subpanel, BorderLayout.CENTER);
 		
 		subpanel = new JPanel();
 		subpanel.setLayout(new GridLayout(0, 1));
 		for (int i = 0 ; i <= 12 ; i++) {
-			subpanel.add(new IntervalDemo(i, INTERVAL_NAMES[i]));
+			subpanel.add(new IntervalDemoButton(i, INTERVAL_NAMES[i]));
 		}
 		panel.add(subpanel, BorderLayout.EAST);
 
 		return panel;
 	}
 	
-	public void playNew() {
+	private int getRandomInterval() {
+		int index = (int)(Math.random() * activeIntervals.size());
 		
-		if (QuizOptions.getOptions().isConstantRoot()) {
-			lastA = QuizOptions.getOptions().getConstantRoot();
-		} else {
-			lastA = Note.getRandomStandardNote();
+		int i = 0;
+		for (int interval : activeIntervals) {
+			if (i == index) {
+				return interval;
+			}
+			i++;
 		}
-		lastB = lastA.getHigher((int)(Math.random() * 13));
-		playNotes(lastA, lastB);
-		super.playNew();
+		return -1;
+	}
+	
+	public void playNew() {
+		if (activeIntervals.size() > 0) {
+			if (QuizOptions.getOptions().isConstantRoot()) {
+				lastA = QuizOptions.getOptions().getConstantRoot();
+			} else {
+				lastA = Note.getRandomStandardNote();
+			}
+			lastB = lastA.getHigher(getRandomInterval());
+			playNotes(lastA, lastB);
+			super.playNew();
+		} else {
+			JOptionPane.showMessageDialog(QuizFrame.getTheFrame(), "Please pick at least one interval");
+		}
 	}
 	
 	@Override
@@ -134,8 +175,8 @@ public class TabInterval extends TabPanel {
 	}
 	
 	@SuppressWarnings("serial")
-	private class IntervalDemo extends JButton {
-		public IntervalDemo(int interval, String label) {
+	private class IntervalDemoButton extends JButton {
+		public IntervalDemoButton(int interval, String label) {
 			super("hear");
 			setFocusable(false);
 			addActionListener((ActionEvent e) -> {
@@ -149,8 +190,8 @@ public class TabInterval extends TabPanel {
 	}
 
 	@SuppressWarnings("serial")
-	private class IntervalSelector extends JButton {
-		public IntervalSelector(int interval, String label, int key) {
+	private class IntervalAnswerButton extends JButton {
+		public IntervalAnswerButton(int interval, String label, int key) {
 			super(String.format("%s (%s)", label, (char)key));
 			setFocusable(false);
 			setMnemonic(key);

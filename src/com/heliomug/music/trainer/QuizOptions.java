@@ -1,31 +1,34 @@
-package com.heliomug.music.quizzer;
+package com.heliomug.music.trainer;
 
 import com.heliomug.music.KeyType;
 import com.heliomug.music.Note;
-import com.heliomug.music.StandardInstrument;
+import com.heliomug.music.StdInstrument;
 
 public class QuizOptions {
-    public static final StandardInstrument DEFAULT_INSTRUMENT = StandardInstrument.PIANO_GRAND;
-    public static final boolean DEFAULT_IS_GUITAR_CHORDS = true;
-    public static final boolean DEFAULT_IS_DRONE_ON = false;
+    public static final StdInstrument DEFAULT_INSTRUMENT = StdInstrument.PIANO_GRAND;
+	public static final int DEFAULT_VOLUME = 100;
+
+	public static final boolean DEFAULT_IS_GUITAR_CHORDS = true;
     public static final boolean DEFAULT_IS_CONSTANT_ROOT = true;
     public static final Note DEFAULT_ROOT_NOTE = Note.C;
     public static final KeyType DEFAULT_KEY_TYPE = KeyType.MAJOR;
-	public static final int DEFAULT_INTERVAL_DELAY = 500; // milliseconds duration
+
+    public static final int DEFAULT_INTERVAL_DELAY = 500; // milliseconds duration
 	public static final int DEFAULT_ARPEGGIO_DELAY = 30; // milliseconds duration
 	public static final int DEFAULT_STRUM_DELAY = 15; // milliseconds duration
 	public static final int DEFAULT_SUSTAIN_TIME = 3000; // milliseconds duration
-	public static final int DEFAULT_VOLUME = 100;
+	
+    public static final boolean DEFAULT_IS_DRONE_ON = false;
 	public static final int DEFAULT_DRONE_VOLUME = 1;
-    public static final StandardInstrument DEFAULT_DRONE_INSTRUMENT = StandardInstrument.PIANO_ELECTRIC_1;
+    public static final StdInstrument DEFAULT_DRONE_INSTRUMENT = StdInstrument.PIANO_ELECTRIC_1;
     
 	private static QuizOptions theOptions;
 	
-	private StandardInstrument activeInstrument;
+	private StdInstrument activeInstrument;
 	private boolean isGuitarChords;
 	private boolean isDroneOn;
 	private int droneVolume;
-	private StandardInstrument droneInstrument;
+	private StdInstrument droneInstrument;
 	private boolean isConstantRoot;
 	private Note constantRoot;
 	private int arpeggioDelay;
@@ -61,8 +64,8 @@ public class QuizOptions {
 	public boolean isGuitarChords() { return isGuitarChords; }
 	public boolean isDroneOn() { return isDroneOn; }
 	public int getDroneVolume() { return droneVolume; }
-	public StandardInstrument getDroneInstrument() { return droneInstrument; }
-	public StandardInstrument getInstrument() { return activeInstrument; }
+	public StdInstrument getDroneInstrument() { return droneInstrument; }
+	public StdInstrument getInstrument() { return activeInstrument; }
 	public int getArpeggioDelay() { return arpeggioDelay; }
 	public int getStrumDelay() { return strumDelay; }
 	public int getIntervalDelay() { return intervalDelay; }
@@ -84,8 +87,8 @@ public class QuizOptions {
 	public void setGuitarChords(boolean b) { isGuitarChords = b; }
 	public void setDroneOn(boolean b) { isDroneOn = b; }
 	public void setDroneVolume(int vol) { droneVolume = vol; }
-	public void setDroneInstrument(StandardInstrument instrument) { droneInstrument = instrument; }
-	public void setInstrument(StandardInstrument instrument) { activeInstrument = instrument; }
+	public void setDroneInstrument(StdInstrument instrument) { droneInstrument = instrument; }
+	public void setInstrument(StdInstrument instrument) { activeInstrument = instrument; }
 	public void setArpeggioDelay(int del) { arpeggioDelay = del; }
 	public void setIntervalDelay(int del) { intervalDelay = del; }
 	public void setStrumDelay(int del) { strumDelay = del; }
