@@ -23,7 +23,6 @@ public class TabKey extends TabPanel {
 	private static final long serialVersionUID = -359077746517787753L;
 
 	private static final int DRONE_CHANNEL = 3;
-	private static final StandardInstrument DRONE_INSTRUMENT = StandardInstrument.ORGAN_CHURCH; 
 	
 	private JComboBox<Note> rootSelector;
 	private JComboBox<KeyType> typeSelector;
@@ -31,19 +30,18 @@ public class TabKey extends TabPanel {
 	private List<Chord> chords = new Key(Note.C, KeyType.MAJOR).getChords();
 	private Chord lastPlayed;
 	
-	private boolean droneWasOn;
-	private Note oldNote;
+	private Drone drone;
 
 	private JPanel responsePanel;
-	
+
 	public TabKey() {
 		super();
 		
-		MidiPlayer.setChannel(DRONE_CHANNEL, DRONE_INSTRUMENT);
+		MidiPlayer.setChannel(DRONE_CHANNEL, QuizOptions.getOptions().getDroneInstrument());
 		
 		lastPlayed = null;
 		chords = null;
-		droneWasOn = QuizOptions.getOptions().isDroneOn();
+		drone = null;
 		
 		updateKey();
 		
@@ -122,6 +120,7 @@ public class TabKey extends TabPanel {
 	public void playNew() {
 		lastPlayed = getRandomChord();
 		MusicPlayer.playChord(lastPlayed, getOptions().getDelay());
+		strikeDroneNote();
 		super.playNew();
 	}
 	
@@ -159,31 +158,42 @@ public class TabKey extends TabPanel {
 	}
 
 	private void killDrone() {
+		if (drone != null) drone.isOn = false;
 		MidiPlayer.notesOff(DRONE_CHANNEL);
-		droneWasOn = false;
+	}
+	
+	private void strikeDroneNote() {
+		if (drone.isOn) {
+			MidiPlayer.noteOn(DRONE_CHANNEL, getRoot(), QuizOptions.getOptions().getDroneVolume());
+		}
 	}
 	
 	private void updateDrone() {
-		QuizOptions options = QuizOptions.getOptions(); 
-		if (options.isDroneOn()) {
-			if (droneWasOn) {
-				if (!getRoot().equals(oldNote)) {
-					killDrone();
-					MidiPlayer.noteOn(DRONE_CHANNEL, getRoot(), options.getDroneVolume());
-					oldNote = getRoot();
-				}
-			} else {
-				MidiPlayer.noteOn(DRONE_CHANNEL, getRoot(), options.getDroneVolume());
-			}
-			droneWasOn = true;
+		Drone newDrone = getCurrentDrone();
+		if (newDrone.isOn) {
+			if (!newDrone.equals(drone)) {
+				killDrone();
+				strikeDroneNote();
+			} 
 		} else {
 			killDrone();
 		}
+		drone = newDrone;
 	}
 	
 	private void updateKey() {
 		updateDrone();
 		updateResponsePanel();
+	}
+	
+	
+	public Drone getCurrentDrone() {
+		QuizOptions opt = QuizOptions.getOptions();
+		boolean on = opt.isDroneOn();
+		Note root = getRoot();
+		StandardInstrument instrument = opt.getDroneInstrument();
+		int vol = opt.getDroneVolume();
+		return new Drone(instrument, root, vol, on);
 	}
 	
 	@SuppressWarnings("serial")
@@ -204,4 +214,31 @@ public class TabKey extends TabPanel {
 		}
 	}
 	
+	private class Drone {
+		int volume;
+		StandardInstrument instrument;
+		Note root;
+		boolean isOn;
+		
+		public Drone(StandardInstrument instrument, Note root, int vol, boolean isOn) {
+			this.instrument = instrument;
+			this.volume = vol;
+			this.root = root;
+			this.isOn = isOn;
+		}
+		
+		public boolean equals(Object other) {
+			if (other == this) {
+				return true;
+			}
+			if (other == null) {
+				return false;
+			}
+			if (!(other instanceof Drone)) {
+				return false;
+			}
+			Drone otherDrone = (Drone) other;
+			return (otherDrone.root.equals(root) && otherDrone.volume == volume && otherDrone.instrument == instrument && otherDrone.isOn == isOn);
+		}
+	}
 }

@@ -15,6 +15,7 @@ public class QuizOptions {
 	public static final int DEFAULT_SUSTAIN_TIME = 3000; // milliseconds duration
 	public static final int DEFAULT_VOLUME = 100;
 	public static final int DEFAULT_DRONE_VOLUME = 1;
+    public static final StandardInstrument DEFAULT_DRONE_INSTRUMENT = StandardInstrument.PIANO_ELECTRIC_1;
     
 	private static QuizOptions theOptions;
 	
@@ -22,6 +23,7 @@ public class QuizOptions {
 	private boolean isGuitarChords;
 	private boolean isDroneOn;
 	private int droneVolume;
+	private StandardInstrument droneInstrument;
 	private boolean isConstantRoot;
 	private Note constantRoot;
 	private int arpeggioDelay;
@@ -42,6 +44,7 @@ public class QuizOptions {
 		strumDelay = DEFAULT_STRUM_DELAY;
 		sustainTime = DEFAULT_SUSTAIN_TIME;
 		volume = DEFAULT_VOLUME;
+		droneInstrument = DEFAULT_DRONE_INSTRUMENT;
 	}
 
 	public static QuizOptions getOptions() {
@@ -56,6 +59,7 @@ public class QuizOptions {
 	public boolean isGuitarChords() { return isGuitarChords; }
 	public boolean isDroneOn() { return isDroneOn; }
 	public int getDroneVolume() { return droneVolume; }
+	public StandardInstrument getDroneInstrument() { return droneInstrument; }
 	public StandardInstrument getInstrument() { return activeInstrument; }
 	public int getArpeggioDelay() { return arpeggioDelay; }
 	public int getStrumDelay() { return strumDelay; }
@@ -78,6 +82,7 @@ public class QuizOptions {
 	public void setGuitarChords(boolean b) { isGuitarChords = b; }
 	public void setDroneOn(boolean b) { isDroneOn = b; }
 	public void setDroneVolume(int vol) { droneVolume = vol; }
+	public void setDroneInstrument(StandardInstrument instrument) { droneInstrument = instrument; }
 	public void setInstrument(StandardInstrument instrument) { activeInstrument = instrument; }
 	public void setArpeggioDelay(int del) { arpeggioDelay = del; }
 	public void setIntervalDelay(int del) { intervalDelay = del; }
