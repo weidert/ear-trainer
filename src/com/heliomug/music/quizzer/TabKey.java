@@ -4,11 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -18,15 +17,15 @@ import com.heliomug.music.KeyType;
 import com.heliomug.music.MidiPlayer;
 import com.heliomug.music.Note;
 import com.heliomug.music.StandardInstrument;
+import com.heliomug.utils.gui.ComboBoxSelector;
 
 public class TabKey extends TabPanel {
 	private static final long serialVersionUID = -359077746517787753L;
 
 	private static final int DRONE_CHANNEL = 3;
 	
-	private JComboBox<Note> rootSelector;
-	private JComboBox<KeyType> typeSelector;
-
+	private Key key = new Key(QuizOptions.DEFAULT_ROOT_NOTE, QuizOptions.DEFAULT_KEY_TYPE);
+	
 	private List<Chord> chords = new Key(Note.C, KeyType.MAJOR).getChords();
 	private Chord lastPlayed;
 	
@@ -37,14 +36,13 @@ public class TabKey extends TabPanel {
 	public TabKey() {
 		super();
 		
-		MidiPlayer.setChannel(DRONE_CHANNEL, QuizOptions.getOptions().getDroneInstrument());
-		
 		lastPlayed = null;
 		chords = null;
 		drone = null;
 		
 		updateKey();
-		
+
+		MidiPlayer.setChannel(DRONE_CHANNEL, QuizOptions.getOptions().getDroneInstrument());
 	}
 
 	@Override
@@ -61,17 +59,22 @@ public class TabKey extends TabPanel {
 		JPanel panel = new EtchedPanel("Options");
 		panel.setLayout(new GridLayout(0, 1));
 		
-		ActionListener al;
-		
-		al = (ActionEvent e) -> updateKey();
 		JPanel subpanel = new JPanel();
 		subpanel.add(new JLabel("Key: "));
-		rootSelector = new JComboBox<>(Note.STANDARD_NOTES);
-		rootSelector.addActionListener(al);
-		subpanel.add(rootSelector);
-		typeSelector = new JComboBox<>(KeyType.values());
-		typeSelector.addActionListener(al);
-		subpanel.add(typeSelector);
+		subpanel.add(new ComboBoxSelector<Note>( 
+				Note.getNoteRange(48, 61),
+				(Note n) -> {
+					key.setRoot(n);
+					updateKey();
+				}
+		));
+		subpanel.add(new ComboBoxSelector<KeyType>(
+				Arrays.asList(KeyType.values()),
+				(KeyType type) -> {
+					key.setType(type);
+					updateKey();
+				}
+		));
 		panel.add(subpanel);
 
 		return panel;
@@ -79,13 +82,13 @@ public class TabKey extends TabPanel {
 	
 	public JPanel getResponsePanel() {
 		responsePanel = new EtchedPanel("Responses");
-		updateResponsePanel();
+		//updateResponsePanel();
 		return responsePanel;
 	}
 	
 	public void updateResponsePanel() {
 		responsePanel.removeAll();
-		chords = getKey().getChords();
+		chords = key.getChords();
 		
 		JPanel subpanel;
 		
@@ -132,14 +135,6 @@ public class TabKey extends TabPanel {
 		super.repeat();
 	}
 
-	public Note getRoot() {
-		return (Note)rootSelector.getSelectedItem();
-	}
-	
-	public Key getKey() {
-		return new Key(getRoot(), (KeyType)typeSelector.getSelectedItem());
-	}
-	
 	private Chord getRandomChord() {
 		return chords.get((int)(Math.random() * chords.size()));
 	}
@@ -164,7 +159,7 @@ public class TabKey extends TabPanel {
 	
 	private void strikeDroneNote() {
 		if (drone.isOn) {
-			MidiPlayer.noteOn(DRONE_CHANNEL, getRoot(), QuizOptions.getOptions().getDroneVolume());
+			MidiPlayer.noteOn(DRONE_CHANNEL, key.getRoot(), QuizOptions.getOptions().getDroneVolume());
 		}
 	}
 	
@@ -190,7 +185,7 @@ public class TabKey extends TabPanel {
 	public Drone getCurrentDrone() {
 		QuizOptions opt = QuizOptions.getOptions();
 		boolean on = opt.isDroneOn();
-		Note root = getRoot();
+		Note root = key.getRoot();
 		StandardInstrument instrument = opt.getDroneInstrument();
 		int vol = opt.getDroneVolume();
 		return new Drone(instrument, root, vol, on);

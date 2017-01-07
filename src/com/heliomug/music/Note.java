@@ -1,6 +1,8 @@
 package com.heliomug.music;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,10 +73,10 @@ public class Note {
 		throw new IllegalArgumentException("Note name not properly formatted");
 	}
 
-	public static Note[] getNoteRange(int start, int fin) {
-		Note[] notes = new Note[fin - start];
+	public static List<Note> getNoteRange(int start, int fin) {
+		List<Note> notes = new ArrayList<>();
 		for (int i = start ; i < fin ; i++) {
-			notes[i - start] = new Note(i);
+			notes.add(new Note(i));
 		}
 		return notes;
 	}
@@ -110,7 +112,7 @@ public class Note {
 		return otherNote.value == this.value;
 	}
 	
-	public String longString() {
+	public String longName() {
 		return String.format("%2s%d", getNoteName(), value / 12);
 	}
 

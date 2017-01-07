@@ -3,7 +3,6 @@ package com.heliomug.music.quizzer;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
-import java.util.function.Consumer;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -12,6 +11,8 @@ import javax.swing.JMenuItem;
 
 import com.heliomug.music.Note;
 import com.heliomug.music.StandardInstrument;
+import com.heliomug.utils.Utils;
+import com.heliomug.utils.gui.MenuSelector;
 
 @SuppressWarnings("serial")
 public class QuizMenuBar extends JMenuBar {
@@ -93,12 +94,12 @@ public class QuizMenuBar extends JMenuBar {
 		item.setMnemonic(KeyEvent.VK_C);
 		menu.add(item);
 		
-		JMenu submenu = new JMenu("Root");
-		submenu.setMnemonic(KeyEvent.VK_R);
-		for (Note n : Note.getNoteRange(NOTE_RANGE_START, NOTE_RANGE_END)) {
-			submenu.add(new NoteSelector(n));
-		}
-		menu.add(submenu);
+		menu.add(new MenuSelector<Note>(
+				"Root", 
+				Note.getNoteRange(NOTE_RANGE_START, NOTE_RANGE_END), 
+				(Note n) -> QuizOptions.getOptions().setConstantRoot(n),
+				(Note n) -> n.longName().toString()
+		));
 		
 		return menu;
 	}
@@ -106,36 +107,35 @@ public class QuizMenuBar extends JMenuBar {
 	public JMenu getInstrumentMenu() {
 		JMenu menu = new JMenu("Instrument");
 		JMenu submenu;
-		menu.setMnemonic(KeyEvent.VK_I);
-		for (StandardInstrument instrument : BASIC_INSTRUMENTS) {
-			menu.add(new InstrumentSelector(instrument));
-		}
-		submenu = new JMenu("...");
-		for (StandardInstrument instrument : StandardInstrument.values()) {
-			if (!Arrays.asList().contains(instrument)) {
-				submenu.add(new InstrumentSelector(instrument));
-			}
-		}
+		
+		submenu = new MenuSelector<StandardInstrument>(
+				"Instrument",
+				Arrays.asList(BASIC_INSTRUMENTS), 
+				Arrays.asList(StandardInstrument.values()),
+				(StandardInstrument instrument) -> QuizOptions.getOptions().setInstrument(instrument),
+				(StandardInstrument instrument) -> instrument.getShortName()
+		);
 		menu.add(submenu);
+		
 		return menu;
 	}
 	
 	public JMenu getDelayMenu() {
 		JMenu menu = new JMenu("Delay Options");
 		menu.setMnemonic(KeyEvent.VK_D);
-		menu.add(new IntegerSelector(
+		menu.add(new MenuSelector<Integer>(
 				"Interval Delay", 
-				INTERVAL_OPTIONS, 
+				Utils.toIntegerList(INTERVAL_OPTIONS), 
 				(Integer delay) -> QuizOptions.getOptions().setIntervalDelay(delay)
 		));
-		menu.add(new IntegerSelector(
+		menu.add(new MenuSelector<Integer>(
 				"Strum Delay", 
-				STRUM_OPTIONS, 
+				Utils.toIntegerList(STRUM_OPTIONS), 
 				(Integer delay) -> QuizOptions.getOptions().setStrumDelay(delay)
 		));
-		menu.add(new IntegerSelector(
+		menu.add(new MenuSelector<Integer>(
 				"Arppegio Delay", 
-				ARPEGGIO_OPTIONS, 
+				Utils.toIntegerList(ARPEGGIO_OPTIONS), 
 				(Integer delay) -> QuizOptions.getOptions().setArpeggioDelay(delay)
 		));
 		return menu;
@@ -154,7 +154,9 @@ public class QuizMenuBar extends JMenuBar {
 		item.setMnemonic(KeyEvent.VK_D);
 		menu.add(item);
 		
-		IntegerSelector selector = new IntegerSelector("Drove Volume", VOLUME_OPTIONS, 
+		MenuSelector<Integer> selector = new MenuSelector<>(
+				"Drove Volume", 
+				Utils.toIntegerList(VOLUME_OPTIONS), 
 				(Integer vol) -> {
 					QuizOptions.getOptions().setDroneVolume(vol);
 				}
@@ -165,39 +167,10 @@ public class QuizMenuBar extends JMenuBar {
 		return menu;
 	}
 	
-	public static QuizMenuBar getBar() {
+	public static QuizMenuBar getTheBar() {
 		if (theBar == null) {
 			theBar = new QuizMenuBar();
 		} 
 		return theBar;
-	}
-	
-	private class IntegerSelector extends JMenu {
-		public IntegerSelector(String title, int[] options, Consumer<Integer> toDo) {
-			super(title);
-			for (int option : options) {
-				JMenuItem item = new JMenuItem(String.valueOf(option));
-				item.addActionListener((ActionEvent e) -> toDo.accept(option));
-				add(item);
-			}
-		}
-	}
-	
-	private class NoteSelector extends JMenuItem {
-		public NoteSelector(Note n) {
-			super(n.longString());
-			addActionListener((ActionEvent e) -> {
-				QuizOptions.getOptions().setConstantRoot(n);
-			});
-		}
-	}
-
-	private class InstrumentSelector extends JMenuItem {
-		public InstrumentSelector(StandardInstrument instrument) {
-			super(instrument.getShortName());
-			addActionListener((ActionEvent e) -> {
-				QuizOptions.getOptions().setInstrument(instrument);
-			});
-		}
 	}
 }
