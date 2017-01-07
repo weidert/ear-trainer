@@ -6,16 +6,19 @@ import com.heliomug.music.StandardInstrument;
 
 public class QuizOptions {
     public static final StandardInstrument DEFAULT_INSTRUMENT = StandardInstrument.PIANO_GRAND;
-    public static final boolean DEFAULT_IS_GUITAR_CHORDS = true;
-    public static final boolean DEFAULT_IS_DRONE_ON = false;
+	public static final int DEFAULT_VOLUME = 100;
+
+	public static final boolean DEFAULT_IS_GUITAR_CHORDS = true;
     public static final boolean DEFAULT_IS_CONSTANT_ROOT = true;
     public static final Note DEFAULT_ROOT_NOTE = Note.C;
     public static final KeyType DEFAULT_KEY_TYPE = KeyType.MAJOR;
-	public static final int DEFAULT_INTERVAL_DELAY = 500; // milliseconds duration
+
+    public static final int DEFAULT_INTERVAL_DELAY = 500; // milliseconds duration
 	public static final int DEFAULT_ARPEGGIO_DELAY = 30; // milliseconds duration
 	public static final int DEFAULT_STRUM_DELAY = 15; // milliseconds duration
 	public static final int DEFAULT_SUSTAIN_TIME = 3000; // milliseconds duration
-	public static final int DEFAULT_VOLUME = 100;
+	
+    public static final boolean DEFAULT_IS_DRONE_ON = false;
 	public static final int DEFAULT_DRONE_VOLUME = 1;
     public static final StandardInstrument DEFAULT_DRONE_INSTRUMENT = StandardInstrument.PIANO_ELECTRIC_1;
     

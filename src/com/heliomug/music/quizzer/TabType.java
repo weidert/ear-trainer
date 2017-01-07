@@ -65,7 +65,15 @@ public class TabType extends TabPanel {
 		JPanel panel = new EtchedPanel("Chord Types");
 		panel.setLayout(new GridLayout(ChordType.values().length, 1));
 		for (ChordType type : ChordType.values()) {
-			ChordTypeToggleBox box = new ChordTypeToggleBox(type);
+			JCheckBox box = new JCheckBox(type.getName());
+			box.setFocusable(false);
+			box.addActionListener((ActionEvent e) -> {
+				if (box.isSelected()) {
+					activeTypes.add(type);
+				} else {
+					activeTypes.remove(type);
+				}
+			});
 			panel.add(box);
 			if (STANDARD_TYPES.contains(type)) {
 				box.setSelected(true);
@@ -184,21 +192,4 @@ public class TabType extends TabPanel {
 			});
 		}
 	}
-	
-	private class ChordTypeToggleBox extends JCheckBox {
-		private static final long serialVersionUID = -4909498331879261312L;
-
-		public ChordTypeToggleBox(ChordType type) {
-			super(type.getName());
-			setFocusable(false);
-			addActionListener((ActionEvent e) -> {
-				if (isSelected()) {
-					activeTypes.add(type);
-				} else {
-					activeTypes.remove(type);
-				}
-			});
-		}
-	}
-
 }
