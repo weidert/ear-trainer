@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("serial")
 public abstract class TabPanel extends JPanel {
@@ -22,6 +23,8 @@ public abstract class TabPanel extends JPanel {
 	private static final int ANS_PENDING = 0;
 	private static final int ANS_RIGHT = 1;
 	private static final int ANS_WRONG = -1;
+	
+	private static final int BUFFER_WIDTH = 5;
 	
 	private int attempted;
 	private int correct;
@@ -68,7 +71,7 @@ public abstract class TabPanel extends JPanel {
 	private JPanel getActualStatusPanel() {
 		JPanel panel = new EtchedPanel("");
 		panel.setLayout(new BorderLayout());
-		panel.add(makeScoreLabel(), BorderLayout.NORTH);
+		//panel.add(makeScoreLabel(), BorderLayout.NORTH);
 		panel.add(getStatusPanel(), BorderLayout.CENTER);
 		return panel;
 	}
@@ -84,12 +87,9 @@ public abstract class TabPanel extends JPanel {
 		JPanel subpanel;
 		
 		subpanel = new JPanel();
-		subpanel.setLayout(new BorderLayout());
-		JPanel subsubpanel;
-		subsubpanel = new JPanel();
-		subsubpanel.setLayout(new GridLayout(1, 0));
-		subsubpanel.setBackground(Color.RED);
-		subsubpanel.add(new JButton("Play New") {
+		subpanel.setLayout(new GridLayout(1, 0));
+		subpanel.setBorder(new EmptyBorder(BUFFER_WIDTH, BUFFER_WIDTH, BUFFER_WIDTH, BUFFER_WIDTH));
+		subpanel.add(new JButton("Play New") {
 			{
 				setFocusable(false);
 				setMnemonic(KeyEvent.VK_P);
@@ -98,7 +98,7 @@ public abstract class TabPanel extends JPanel {
 				});
 			}
 		});
-		subsubpanel.add(new JButton("Repeat") {
+		subpanel.add(new JButton("Repeat") {
 			{
 				setFocusable(false);
 				setMnemonic(KeyEvent.VK_R);
@@ -107,12 +107,16 @@ public abstract class TabPanel extends JPanel {
 				});
 			}
 		});
-		subpanel.add(subsubpanel, BorderLayout.WEST);
+		panel.add(subpanel, BorderLayout.WEST);
+		
+		subpanel = new JPanel();
+		subpanel.setBorder(new EmptyBorder(BUFFER_WIDTH, BUFFER_WIDTH, BUFFER_WIDTH, BUFFER_WIDTH));
+		subpanel.setLayout(new BorderLayout());
 		subpanel.add(new JLabel("???") {
 			@Override
 			public void paint(Graphics g) {
 				if (lastCorrect == ANS_WRONG || lastCorrect == NOT_STARTED) {
-					setText("  ");
+					setText(" - ");
 				} else if (lastCorrect == ANS_PENDING) {
 					setText("???");
 				} else if (lastCorrect == ANS_RIGHT) {
@@ -120,8 +124,9 @@ public abstract class TabPanel extends JPanel {
 				}
 				super.paint(g);
 			}
-		}, BorderLayout.EAST);
-		panel.add(subpanel, BorderLayout.NORTH);
+		}, BorderLayout.NORTH);
+		subpanel.add(makeScoreLabel(), BorderLayout.SOUTH);
+		panel.add(subpanel, BorderLayout.CENTER);
 
 		subpanel = new JPanel() {
 			@Override
@@ -170,6 +175,7 @@ public abstract class TabPanel extends JPanel {
 	
 	
 	public void answerCorrect(String answer) {
+		lastAnswer = answer;
 		if (lastCorrect == ANS_PENDING) {
 			attempted++;
 			correct++;

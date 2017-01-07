@@ -1,7 +1,6 @@
 package com.heliomug.music.trainer;
 
 import java.awt.BorderLayout;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -17,6 +16,7 @@ import javax.swing.JPanel;
 import com.heliomug.music.Chord;
 import com.heliomug.music.ChordType;
 import com.heliomug.music.Note;
+import com.heliomug.utils.gui.UpdatingCheckBox;
 
 public class TabType extends TabPanel {
 	private static final long serialVersionUID = 3177499161338508351L;
@@ -61,32 +61,18 @@ public class TabType extends TabPanel {
 	public JPanel getStatusPanel() {
 		JPanel panel = new JPanel();
 		
-		@SuppressWarnings("serial")
-		JCheckBox guitBox = new JCheckBox("Guitarify Chords") {
-			@Override
-			public void paint(Graphics g) {
-				this.setSelected(QuizOptions.getOptions().isGuitarChords());
-				super.paint(g);
-			}
-		};
-		guitBox.addActionListener((ActionEvent e) -> {
-			QuizOptions.getOptions().setGuitarChords(guitBox.isSelected());
-		});
-		panel.add(guitBox);
+		panel.add(new UpdatingCheckBox(
+				"Guitarify Chords",
+				(Boolean b) -> QuizOptions.getOptions().setGuitarChords(b),
+				() -> QuizOptions.getOptions().isGuitarChords()
+		));
 
-		@SuppressWarnings("serial")
-		JCheckBox rootBox = new JCheckBox("Constant Root") {
-			@Override
-			public void paint(Graphics g) {
-				this.setSelected(QuizOptions.getOptions().isConstantRoot());
-				super.paint(g);
-			}
-		};
-		rootBox.addActionListener((ActionEvent e) -> {
-			QuizOptions.getOptions().setConstantRoot(rootBox.isSelected());
-		});
-		panel.add(rootBox);
-		
+		panel.add(new UpdatingCheckBox(
+				"Constant Root",
+				(Boolean b) -> QuizOptions.getOptions().setConstantRoot(b),
+				() -> QuizOptions.getOptions().isConstantRoot()
+		));
+
 		return panel;
 	}
 	

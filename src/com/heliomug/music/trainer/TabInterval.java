@@ -1,7 +1,6 @@
 package com.heliomug.music.trainer;
 
 import java.awt.BorderLayout;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -15,6 +14,7 @@ import javax.swing.JPanel;
 
 import com.heliomug.music.Chord;
 import com.heliomug.music.Note;
+import com.heliomug.utils.gui.UpdatingCheckBox;
 
 public class TabInterval extends TabPanel {
 	private static final long serialVersionUID = 1825689907037878532L;
@@ -68,18 +68,11 @@ public class TabInterval extends TabPanel {
 	public JPanel getStatusPanel() {
 		JPanel panel = new JPanel();
 		
-		@SuppressWarnings("serial")
-		JCheckBox box = new JCheckBox("Constant Root") {
-			@Override
-			public void paint(Graphics g) {
-				this.setSelected(QuizOptions.getOptions().isConstantRoot());
-				super.paint(g);
-			}
-		};
-		box.addActionListener((ActionEvent e) -> {
-			QuizOptions.getOptions().setConstantRoot(box.isSelected());
-		});
-		panel.add(box);
+		panel.add(new UpdatingCheckBox(
+				"Constant Root",
+				(Boolean b) -> QuizOptions.getOptions().setConstantRoot(b),
+				() -> QuizOptions.getOptions().isConstantRoot()
+		));
 
 		return panel;
 	}

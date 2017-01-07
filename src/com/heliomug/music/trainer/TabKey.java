@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -19,6 +18,7 @@ import com.heliomug.music.MidiPlayer;
 import com.heliomug.music.Note;
 import com.heliomug.music.StdInstrument;
 import com.heliomug.utils.gui.ComboBoxSelector;
+import com.heliomug.utils.gui.UpdatingCheckBox;
 
 public class TabKey extends TabPanel {
 	private static final long serialVersionUID = -359077746517787753L;
@@ -51,18 +51,11 @@ public class TabKey extends TabPanel {
 	public JPanel getStatusPanel() {
 		JPanel panel = new JPanel();
 		
-		@SuppressWarnings("serial")
-		JCheckBox guitBox = new JCheckBox("Guitarify Chords") {
-			@Override
-			public void paint(Graphics g) {
-				this.setSelected(QuizOptions.getOptions().isGuitarChords());
-				super.paint(g);
-			}
-		};
-		guitBox.addActionListener((ActionEvent e) -> {
-			QuizOptions.getOptions().setGuitarChords(guitBox.isSelected());
-		});
-		panel.add(guitBox);
+		panel.add(new UpdatingCheckBox(
+				"Guitarify Chords",
+				(Boolean b) -> QuizOptions.getOptions().setGuitarChords(b),
+				() -> QuizOptions.getOptions().isGuitarChords()
+		));
 
 		return panel;
 	}

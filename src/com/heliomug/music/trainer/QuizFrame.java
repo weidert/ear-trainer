@@ -8,7 +8,7 @@ import javax.swing.event.ChangeEvent;
 
 public class QuizFrame extends JFrame {
 	private static final long serialVersionUID = -8687531351328013961L;
-
+	
 	private static final String FRAME_TITLE = "Ear Trainer";
 
 	public static QuizFrame theFrame; 
