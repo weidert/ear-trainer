@@ -9,8 +9,10 @@ public class QuizOptions {
 	public static final int DEFAULT_VOLUME = 100;
 
 	public static final boolean DEFAULT_IS_GUITAR_CHORDS = true;
-    public static final boolean DEFAULT_IS_CONSTANT_ROOT = true;
+    
+	public static final boolean DEFAULT_IS_CONSTANT_ROOT = true;
     public static final Note DEFAULT_ROOT_NOTE = Note.C;
+    
     public static final KeyType DEFAULT_KEY_TYPE = KeyType.MAJOR;
 
     public static final int DEFAULT_INTERVAL_DELAY = 500; // milliseconds duration
@@ -20,7 +22,7 @@ public class QuizOptions {
 	
     public static final boolean DEFAULT_IS_DRONE_ON = false;
 	public static final int DEFAULT_DRONE_VOLUME = 1;
-    public static final StdInstrument DEFAULT_DRONE_INSTRUMENT = StdInstrument.PIANO_ELECTRIC_1;
+    public static final StdInstrument DEFAULT_DRONE_INSTRUMENT = StdInstrument.ORGAN_DRAWBAR;
     
 	private static QuizOptions theOptions;
 	

@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -19,6 +18,7 @@ import com.heliomug.music.MidiPlayer;
 import com.heliomug.music.Note;
 import com.heliomug.music.StdInstrument;
 import com.heliomug.utils.gui.ComboBoxSelector;
+import com.heliomug.utils.gui.UpdatingCheckBox;
 
 public class TabKey extends TabPanel {
 	private static final long serialVersionUID = -359077746517787753L;
@@ -48,19 +48,53 @@ public class TabKey extends TabPanel {
 		super.paint(g);
 	}
 	
-	public JPanel getStatusPanel() {
+	@SuppressWarnings("serial")
+	@Override
+	public JPanel getTopPanel() {
 		JPanel panel = new JPanel();
-		JCheckBox box = new JCheckBox("Use Drone");
-		box.addActionListener((ActionEvent e) -> {
-			QuizOptions.getOptions().setDroneOn(box.isSelected());
-			updateDrone();
-		});
-		panel.add(box);
+		panel.setLayout(new BorderLayout());
+		JPanel subpanel;
 		
+		subpanel = new JPanel();
+		subpanel.setLayout(new GridLayout(0, 1));
+		subpanel.add(new JLabel("Instrument: ") {
+			@Override
+			public void paint(Graphics g) {
+				setText("Instrument: " + QuizOptions.getOptions().getInstrument().getShortName());
+				super.paint(g);
+			}
+		});
+		subpanel.add(new JLabel("Drone: ") {
+			@Override
+			public void paint(Graphics g) {
+				setText("Drone: " + QuizOptions.getOptions().getDroneInstrument().getShortName());
+				super.paint(g);
+			}
+		});
+		panel.add(subpanel, BorderLayout.NORTH);
+		
+		subpanel = new JPanel();
+		subpanel.add(new UpdatingCheckBox(
+				"Guitarify Chords",
+				(Boolean b) -> QuizOptions.getOptions().setGuitarChords(b),
+				() -> QuizOptions.getOptions().isGuitarChords()
+		));
+
+		subpanel.add(new UpdatingCheckBox(
+				"Use Drone",
+				(Boolean b) -> {
+					QuizOptions.getOptions().setDroneOn(b);
+					updateDrone();
+				},
+				() -> QuizOptions.getOptions().isDroneOn()
+		));
+		panel.add(subpanel, BorderLayout.SOUTH);
+
 		return panel;
 	}
 	
-	public JPanel getOptionPanel() {
+	@Override
+	public JPanel getLeftPanel() {
 		JPanel panel = new EtchedPanel("Key");
 		panel.setLayout(new GridLayout(0, 1));
 		
@@ -85,7 +119,8 @@ public class TabKey extends TabPanel {
 		return panel;
 	}
 	
-	public JPanel getResponsePanel() {
+	@Override
+	public JPanel getRightPanel() {
 		@SuppressWarnings("serial")
 		JPanel responsePanel = new EtchedPanel("Responses") {
 			@Override 
@@ -135,7 +170,7 @@ public class TabKey extends TabPanel {
 	public void playNew() {
 		lastPlayed = getRandomChord();
 		MusicPlayer.playChord(lastPlayed, getOptions().getDelay());
-		strikeDroneNote();
+		strikeDroneNote(drone);
 		super.playNew();
 	}
 	
@@ -154,10 +189,11 @@ public class TabKey extends TabPanel {
 	private void receiveResponse(Chord chord) {
 		if (lastPlayed != null) {
 			boolean typeRight = chord.getType() == lastPlayed.getType();
-			boolean rootRight = chord.getRoot() == lastPlayed.getRoot();
+			boolean rootRight = chord.getRoot().equals(lastPlayed.getRoot());
 			if (typeRight && rootRight) {
 				answerCorrect(chord.getShortName());
 			} else {
+				System.out.println(lastPlayed);
 				answerWrong();
 			}
 			repaint();
@@ -169,20 +205,18 @@ public class TabKey extends TabPanel {
 		MidiPlayer.notesOff(DRONE_CHANNEL);
 	}
 	
-	private void strikeDroneNote() {
+	private void strikeDroneNote(Drone drone) {
 		if (drone.isOn) {
-			MidiPlayer.noteOn(DRONE_CHANNEL, key.getRoot(), QuizOptions.getOptions().getDroneVolume());
+			MidiPlayer.noteOn(DRONE_CHANNEL, drone.root, drone.volume);
 		}
 	}
 	
 	private void updateDrone() {
 		Drone newDrone = getCurrentDrone();
-		System.out.println("updating");
-		System.out.println(newDrone.isOn);
 		if (newDrone.isOn) {
 			if (!newDrone.equals(drone)) {
 				killDrone();
-				strikeDroneNote();
+				strikeDroneNote(newDrone);
 			} 
 		} else {
 			killDrone();

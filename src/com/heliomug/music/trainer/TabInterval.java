@@ -1,6 +1,7 @@
 package com.heliomug.music.trainer;
 
 import java.awt.BorderLayout;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -9,11 +10,13 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.heliomug.music.Chord;
 import com.heliomug.music.Note;
+import com.heliomug.utils.gui.UpdatingCheckBox;
 
 public class TabInterval extends TabPanel {
 	private static final long serialVersionUID = 1825689907037878532L;
@@ -64,11 +67,34 @@ public class TabInterval extends TabPanel {
 		}
 	}
 	
-	public JPanel getStatusPanel() {
-		return new JPanel();
+	@SuppressWarnings("serial")
+	@Override
+	public JPanel getTopPanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		JPanel subpanel;
+
+		panel.add(new JLabel("Instrument: ") {
+			@Override
+			public void paint(Graphics g) {
+				setText("Instrument: " + QuizOptions.getOptions().getInstrument().getShortName());
+				super.paint(g);
+			}
+		}, BorderLayout.NORTH);
+		
+		subpanel = new JPanel();
+		subpanel.add(new UpdatingCheckBox(
+				"Constant Root",
+				(Boolean b) -> QuizOptions.getOptions().setConstantRoot(b),
+				() -> QuizOptions.getOptions().isConstantRoot()
+		));
+		panel.add(subpanel, BorderLayout.SOUTH);
+
+		return panel;
 	}
 	
-	public JPanel getOptionPanel() {
+	@Override
+	public JPanel getLeftPanel() {
 		JPanel panel = new EtchedPanel("Intervals");
 		panel.setLayout(new GridLayout(0, 1));
 		for (int i = 0 ; i <= 12 ; i++) {
@@ -82,12 +108,14 @@ public class TabInterval extends TabPanel {
 					activeIntervals.remove(interval);
 				}
 			});
+			box.setSelected(true);
 			panel.add(box);
 		}
 		return panel;
 	}
 
-	public JPanel getResponsePanel() {
+	@Override
+	public JPanel getRightPanel() {
 		JPanel panel = new EtchedPanel("Reponses");
 		
 		JPanel subpanel;

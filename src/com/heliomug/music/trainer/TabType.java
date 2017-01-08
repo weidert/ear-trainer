@@ -1,6 +1,7 @@
 package com.heliomug.music.trainer;
 
 import java.awt.BorderLayout;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -10,12 +11,14 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.heliomug.music.Chord;
 import com.heliomug.music.ChordType;
 import com.heliomug.music.Note;
+import com.heliomug.utils.gui.UpdatingCheckBox;
 
 public class TabType extends TabPanel {
 	private static final long serialVersionUID = 3177499161338508351L;
@@ -57,11 +60,40 @@ public class TabType extends TabPanel {
 		lastPlayed = null;
 	}
 
-	public JPanel getStatusPanel() {
-		return new JPanel();
+	@SuppressWarnings("serial")
+	@Override
+	public JPanel getTopPanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		JPanel subpanel;
+
+		panel.add(new JLabel("Instrument: ") {
+			@Override
+			public void paint(Graphics g) {
+				setText("Instrument: " + QuizOptions.getOptions().getInstrument().getShortName());
+				super.paint(g);
+			}
+		}, BorderLayout.NORTH);
+		
+		subpanel = new JPanel();
+		subpanel.add(new UpdatingCheckBox(
+				"Guitarify Chords",
+				(Boolean b) -> QuizOptions.getOptions().setGuitarChords(b),
+				() -> QuizOptions.getOptions().isGuitarChords()
+		));
+
+		subpanel.add(new UpdatingCheckBox(
+				"Constant Root",
+				(Boolean b) -> QuizOptions.getOptions().setConstantRoot(b),
+				() -> QuizOptions.getOptions().isConstantRoot()
+		));
+		panel.add(subpanel, BorderLayout.SOUTH);
+
+		return panel;
 	}
 	
-	public JPanel getOptionPanel() {
+	@Override
+	public JPanel getLeftPanel() {
 		JPanel panel = new EtchedPanel("Chord Types");
 		panel.setLayout(new GridLayout(ChordType.values().length, 1));
 		for (ChordType type : ChordType.values()) {
@@ -82,7 +114,8 @@ public class TabType extends TabPanel {
 		return panel;
 	}
 	
-	public JPanel getResponsePanel() {
+	@Override
+	public JPanel getRightPanel() {
 		JPanel panel = new EtchedPanel("Reponses");
 
 		JPanel subpanel;

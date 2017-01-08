@@ -1,5 +1,6 @@
 package com.heliomug.music.trainer;
 
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import com.heliomug.music.Note;
 import com.heliomug.music.StdInstrument;
 import com.heliomug.utils.Utils;
 import com.heliomug.utils.gui.MenuSelector;
+import com.heliomug.utils.gui.UpdatingCheckItem;
 
 @SuppressWarnings("serial")
 public class QuizMenuBar extends JMenuBar {
@@ -60,12 +62,11 @@ public class QuizMenuBar extends JMenuBar {
 		
 		menu.add(getInstrumentMenu());
 
-		JCheckBoxMenuItem item = new JCheckBoxMenuItem("Guitarify Chords"); 
-		item.setSelected(QuizOptions.DEFAULT_IS_GUITAR_CHORDS);
-		JCheckBoxMenuItem guit = item;
-		item.addActionListener((ActionEvent e) -> {
-			QuizOptions.getOptions().setGuitarChords(guit.getState());
-		});
+		UpdatingCheckItem item = new UpdatingCheckItem(
+				"Guitarify Chords",
+				(Boolean b) -> QuizOptions.getOptions().setGuitarChords(b),
+				() -> QuizOptions.getOptions().isGuitarChords()
+		);
 		item.setMnemonic(KeyEvent.VK_G);
 		menu.add(item);
 
@@ -82,7 +83,13 @@ public class QuizMenuBar extends JMenuBar {
 		JMenu menu = new JMenu("Root");
 		menu.setMnemonic(KeyEvent.VK_R);
 		
-		JCheckBoxMenuItem item = new JCheckBoxMenuItem("Constant Root"); 
+		JCheckBoxMenuItem item = new JCheckBoxMenuItem("Constant Root") {
+			@Override
+			public void paint(Graphics g) {
+				this.setSelected(QuizOptions.getOptions().isConstantRoot());
+				super.paint(g);
+			}
+		}; 
 		item.setSelected(QuizOptions.DEFAULT_IS_CONSTANT_ROOT);
 		JCheckBoxMenuItem root = item;
 		item.addActionListener((ActionEvent e) -> {
@@ -148,7 +155,13 @@ public class QuizMenuBar extends JMenuBar {
 		JMenu menu = new JMenu("Drone");
 		menu.setMnemonic(KeyEvent.VK_D);
 
-		JCheckBoxMenuItem item = new JCheckBoxMenuItem("Use Drone"); 
+		JCheckBoxMenuItem item = new JCheckBoxMenuItem("Use Drone") {
+			@Override
+			public void paint(Graphics g) {
+				this.setSelected(QuizOptions.getOptions().isDroneOn());
+				super.paint(g);
+			}
+		}; 
 		item.setSelected(QuizOptions.DEFAULT_IS_DRONE_ON);
 		JCheckBoxMenuItem drone = item;
 		item.addActionListener((ActionEvent e) -> {
