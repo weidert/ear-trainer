@@ -54,6 +54,15 @@ public class QuizMenuBar extends JMenuBar {
 		
 		add(getOptionMenu());
 		
+		menu = new JMenu("About");
+		menu.setMnemonic(KeyEvent.VK_A);
+		item = new JMenuItem("About");
+		item.addActionListener((ActionEvent e) -> {
+			String message = "By Craig Weidert, 2017";
+			javax.swing.JOptionPane.showMessageDialog(QuizFrame.getTheFrame(), message);
+		});
+		menu.add(item);
+		add(menu);
 	}
 	
 	public JMenu getOptionMenu() {

@@ -193,7 +193,6 @@ public class TabKey extends TabPanel {
 			if (typeRight && rootRight) {
 				answerCorrect(chord.getShortName());
 			} else {
-				System.out.println(lastPlayed);
 				answerWrong();
 			}
 			repaint();
